@@ -1,6 +1,7 @@
 import styles from './index.module.css';
 import { type NextPage } from 'next';
 import Head from 'next/head';
+import { api } from "../utils/api";
 import {
   Card,
   Text,
@@ -21,6 +22,11 @@ const Home: NextPage = () => {
     { name: 'Marusia Urusova' },
     { name: 'Ania Tischenko' }
   ];
+
+  const meetingsQuery = api.meetings.getAll.useQuery();
+
+  console.log("meetingsQuery",meetingsQuery.data)
+
   return (
     <>
       <Head>

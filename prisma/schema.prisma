@@ -11,8 +11,38 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Meeting {
+  id            Int         @id @default(autoincrement())
+  created_at    DateTime    @default(now())
+  date          DateTime
+  title         String
+  author        String
+  cover         String?      // Assuming the `cover` field is a string representing the image URL or file path, made it optional with `?`
+  chosenById    Int
+  chosenBy      Participant   @relation("MeetingChosenBy", fields: [chosenById], references: [id])
+  participants  ParticipantMeeting[]
+  isComplete    Boolean
+}
+
+model Participant {
+  id          Int         @id @default(autoincrement())
+  created_at  DateTime    @default(now())
+  firstName   String
+  lastName    String
+  joinDate    DateTime
+  exitDate    DateTime?
+  meetings    ParticipantMeeting[]
+  chosenMeetings Meeting[]  @relation("MeetingChosenBy")
+}
+
+model ParticipantMeeting {
+  meeting     Meeting     @relation(fields: [meetingId], references: [id])
+  participant Participant @relation(fields: [participantId], references: [id])
+
+  meetingId   Int
+  participantId Int
+  rating Int
+  isVisited Boolean
+
+  @@id([meetingId, participantId])
 }
