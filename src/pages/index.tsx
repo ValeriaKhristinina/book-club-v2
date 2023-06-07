@@ -1,20 +1,20 @@
 import styles from './index.module.css';
 import { type NextPage } from 'next';
 import Head from 'next/head';
-import { api } from "../utils/api";
+import { api } from '../utils/api';
 import {
   Card,
   Text,
   Title,
   Container,
   Group,
-  Button,
   Image,
   List
 } from '@mantine/core';
 import Link from 'next/link';
 
 import BookCard from '../components/book-card';
+import Layout from '~/components/layout/layout';
 
 const Home: NextPage = () => {
   const members = [
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
   const meetingsQuery = api.meetings.getAll.useQuery();
 
-  console.log("meetingsQuery",meetingsQuery.data)
+  console.log('meetingsQuery', meetingsQuery.data);
 
   return (
     <>
@@ -35,19 +35,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container className={styles.app}>
-        <Container className={styles.container}>
-          <header className={styles.header}>
-            <Group position="apart" w="100%">
-              <Group>
-                <Title size="20px">
-                  <Link href={'/'}>Book Club</Link>
-                </Title>
-              </Group>
-              <Group>
-                <Button>Login</Button>
-              </Group>
-            </Group>
-          </header>
+        <Layout>
           <main className={styles.main}>
             <Group position="apart" mb="40px">
               <Card w="160px" radius="xl" shadow="lg">
@@ -97,7 +85,7 @@ const Home: NextPage = () => {
                       );
                     })}
                     <List.Item>
-                      <Link href='/members'>...</Link>
+                      <Link href="/members">...</Link>
                     </List.Item>
                   </List>
                 </Card>
@@ -113,24 +101,10 @@ const Home: NextPage = () => {
                 <BookCard></BookCard>
                 <BookCard></BookCard>
               </Group>
-              <Link href='/'>See all past meetings...</Link>
+              <Link href="/">See all past meetings...</Link>
             </Container>
           </main>
-          <footer className={styles.footer}>
-            <Group position="right">
-              <Group position="left">
-                <Text>
-                  Created by{' '}
-                  <i>
-                    <Link href="https://github.com/ValeriaKhristinina">
-                      Lera Khristinina
-                    </Link>
-                  </i>
-                </Text>
-              </Group>
-            </Group>
-          </footer>
-        </Container>
+        </Layout>
       </Container>
     </>
   );
