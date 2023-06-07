@@ -1,0 +1,12 @@
+.container {
+  width: 2024px;
+}
+.header {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.footer {
+  padding: 16px 0;
+}
