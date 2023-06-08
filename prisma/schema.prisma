@@ -19,25 +19,26 @@ model Meeting {
   author        String
   cover         String?      // Assuming the `cover` field is a string representing the image URL or file path, made it optional with `?`
   chosenById    Int
-  chosenBy      Participant   @relation("MeetingChosenBy", fields: [chosenById], references: [id])
-  participants  ParticipantMeeting[]
+  chosenBy      Member   @relation("MeetingChosenBy", fields: [chosenById], references: [id])
+  participants  MeetingParticipants[]
   isComplete    Boolean
 }
 
-model Participant {
+model Member {
   id          Int         @id @default(autoincrement())
   created_at  DateTime    @default(now())
   firstName   String
   lastName    String
   joinDate    DateTime
   exitDate    DateTime?
-  meetings    ParticipantMeeting[]
+  meetings    MeetingParticipants[]
   chosenMeetings Meeting[]  @relation("MeetingChosenBy")
+	@@map("Member")
 }
 
-model ParticipantMeeting {
+model MeetingParticipants {
   meeting     Meeting     @relation(fields: [meetingId], references: [id])
-  participant Participant @relation(fields: [participantId], references: [id])
+  participant Member @relation(fields: [participantId], references: [id])
 
   meetingId   Int
   participantId Int
@@ -45,4 +46,5 @@ model ParticipantMeeting {
   isVisited Boolean
 
   @@id([meetingId, participantId])
+	@@map("MeetingParticipants")
 }
