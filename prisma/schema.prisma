@@ -18,8 +18,8 @@ model Meeting {
   title         String
   author        String
   cover         String?      // Assuming the `cover` field is a string representing the image URL or file path, made it optional with `?`
-  chosenById    Int
-  chosenBy      Member   @relation("MeetingChosenBy", fields: [chosenById], references: [id])
+  chosenById    Int?
+  chosenBy      Member?   @relation("MeetingChosenBy", fields: [chosenById], references: [id])
   participants  MeetingParticipants[]
   isComplete    Boolean
 }

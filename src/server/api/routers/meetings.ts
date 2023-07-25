@@ -32,38 +32,31 @@ export const meetingsRouter = createTRPCRouter({
         title: z.string(),
         author: z.string(),
         cover: z.string().optional(),
-        chosenById: z.number(),
-        participants: z.array(
-          z.object({
-            id: z.number(),
-            created_at: z.date(),
-            firstName: z.string(),
-            lastName: z.string(),
-            joinDate: z.date(),
-            exitDate: z.date().optional()
-          })
-        ),
+        chosenById: z.number().optional(),
+        // participants: z.array(
+        //   z.object({
+        //     id: z.number(),
+        //     rating: z.union([z.number(), z.null()]),
+        //     isVisited: z.boolean(),
+        //   })
+        // ),
         isComplete: z.boolean()
       })
     )
-    .query(({ input, ctx }) => {
+    .mutation(({ input, ctx }) => {
+      const baseDataRequest = {
+        date: input.date,
+        title: input.title,
+        author: input.author,
+        cover: input.cover,
+        chosenById:input.chosenById ? input.chosenById : null, 
+        isComplete: input.isComplete
+      };
+      // if (input.chosenById) {
+      //   baseDataRequest.chosenById = input.chosenById
+      // }
       return ctx.prisma.meeting.create({
-        data: {
-          date: input.date,
-          title: input.title,
-          author: input.author,
-          cover: input.cover,
-          chosenById: input.chosenById,
-          participants: {
-            createMany: {
-              data: input.participants
-            }
-          },
-          isComplete: input.isComplete
-        },
-        include: {
-          participants: true
-        }
+        data: baseDataRequest
       });
     }),
   update: publicProcedure
@@ -90,7 +83,7 @@ export const meetingsRouter = createTRPCRouter({
         isComplete: z.boolean().optional()
       })
     )
-    .query(({ input, ctx }) => {
+    .mutation(({ input, ctx }) => {
       return ctx.prisma.meeting.update({
         where: {
           id: input.id
@@ -102,11 +95,11 @@ export const meetingsRouter = createTRPCRouter({
           cover: input.cover,
           chosenById: input.chosenById,
           participants: {
-            upsert: input.participants?.map((participant) => ({
-              where: { id: participant.id },
-              create: participant,
-              update: participant
-            }))
+            // upsert: input.participants?.map((participant) => ({
+            //   where: { id: participant.id },
+            //   create: participant,
+            //   update: participant
+            // }))
           },
           isComplete: input.isComplete
         },

@@ -1,0 +1,14 @@
+.formWrapper {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.participants {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.participants section {
+  display: flex;
+}

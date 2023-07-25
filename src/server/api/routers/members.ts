@@ -1,13 +1,13 @@
-import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { z } from 'zod';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 export const membersRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.member.findMany({
       include: {
         meetings: true,
-        chosenMeetings: true,
-      },
+        chosenMeetings: true
+      }
     });
   }),
   getById: publicProcedure
@@ -15,12 +15,12 @@ export const membersRouter = createTRPCRouter({
     .query(({ input, ctx }) => {
       return ctx.prisma.member.findUnique({
         where: {
-          id: input.id,
+          id: input.id
         },
         include: {
           meetings: true,
-          chosenMeetings: true,
-        },
+          chosenMeetings: true
+        }
       });
     }),
   create: publicProcedure
@@ -29,17 +29,18 @@ export const membersRouter = createTRPCRouter({
         firstName: z.string(),
         lastName: z.string(),
         joinDate: z.date(),
-        exitDate: z.date().optional(),
+        exitDate: z.union([z.date(), z.null()])
       })
     )
-    .query(({ input, ctx }) => {
+    .mutation(({ input, ctx }) => {
+      // return true
       return ctx.prisma.member.create({
         data: {
           firstName: input.firstName,
           lastName: input.lastName,
           joinDate: input.joinDate,
-          exitDate: input.exitDate,
-        },
+          exitDate: input.exitDate
+        }
       });
     }),
   update: publicProcedure
@@ -49,21 +50,41 @@ export const membersRouter = createTRPCRouter({
         firstName: z.string().optional(),
         lastName: z.string().optional(),
         joinDate: z.date().optional(),
-        exitDate: z.date().optional(),
+        exitDate: z.date().optional()
       })
     )
-    .query(({ input, ctx }) => {
+    .mutation(({ input, ctx }) => {
       return ctx.prisma.member.update({
         where: {
-          id: input.id,
+          id: input.id
         },
         data: {
           firstName: input.firstName,
           lastName: input.lastName,
           joinDate: input.joinDate,
-          exitDate: input.exitDate,
+          exitDate: input.exitDate
+        }
+      });
+    }),
+    getActiveMembersByDate: publicProcedure
+    .input(z.object({ date: z.date() }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.member.findMany({
+        where: {
+          OR: [
+            {
+              exitDate: null,
+            },
+            {
+              exitDate: {
+                gte: input.date,
+              },
+            },
+          ],
+          joinDate: {
+            lte: input.date,
+          },
         },
       });
     }),
 });
-
