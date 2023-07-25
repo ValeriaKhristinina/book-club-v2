@@ -10,6 +10,7 @@ import {
   Container,
   Group,
   InputBase,
+  Title,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import Layout from '~/components/layout/layout';
@@ -63,7 +64,6 @@ const MembersPage: NextPage = () => {
     }
   });
 
-  console.log('form', form)
   return (
     <Layout>
       <main className={styles.membersPage}>
@@ -73,12 +73,13 @@ const MembersPage: NextPage = () => {
               Create new member
             </Button>
           ) : (
-            <Card w="500px" shadow="xl" padding="40px">
+            <Card w="500px" shadow="xl" padding="80px 60px" mb="60px">
               <form
                 onSubmit={form.onSubmit((values) => {
                   createMemberMutation.mutate(values);
                 })}
               >
+                <Title order={3} mb="24px">Add new member</Title>
                 <InputBase
                   label="First name"
                   placeholder="First name"
