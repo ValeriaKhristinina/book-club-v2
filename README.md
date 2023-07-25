@@ -29,4 +29,11 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 ## Build command
 
-Runs the app in the development mode `npm run dev`
+Runs the app in the development mode (run the dev server) `npm run dev`
+
+## Backend 
+
+Command for push schema to Railway and generate type definitions for the Prisma client
+`npx prisma db push`
+
+`npx prisma studio`
