@@ -29,4 +29,4 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 ## Build command
 
-Runs the app in the development mode `npm run start`
+Runs the app in the development mode `npm run dev`
