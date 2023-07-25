@@ -42,7 +42,7 @@ model MeetingParticipants {
 
   meetingId   Int
   participantId Int
-  rating Int
+  rating Int ?
   isVisited Boolean
 
   @@id([meetingId, participantId])

@@ -1,5 +1,6 @@
 import styles from './index.module.css';
 import { type NextPage } from 'next';
+import dayjs from 'dayjs';
 import { api } from '../utils/api';
 import {
   Card,
@@ -11,22 +12,27 @@ import {
   List
 } from '@mantine/core';
 import Link from 'next/link';
-
-import BookCard from '../components/book-card/book-card';
 import Layout from '~/components/layout/layout';
+import BookCard from '../components/book-card/book-card';
+import { BOOK_CLUB_BIRTHDAY } from '~/const';
 
 const Home: NextPage = () => {
-  const members = [
-    { name: 'Nikita Khristinin' },
-    { name: 'Marusia Urusova' },
-    { name: 'Ania Tischenko' }
-  ];
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
 
-  const meetingsQuery = api.meetings.getAll.useQuery();
-  const membersQuery = api.members.getAll.useQuery();
+  const actualMembersQuery = api.members.getActiveMembersByDate.useQuery({
+    date: now
+  });
+  const actualMembers = actualMembersQuery.data ? actualMembersQuery.data : [];
+  const closedMeetingQuery = api.meetings.getClosedMeetings.useQuery()
+  const closedMeetings =  closedMeetingQuery.data ? closedMeetingQuery.data : []
 
-  console.log('meetingsQuery', meetingsQuery.data);
-  console.log('membersQuery', membersQuery.data);
+  //Calc bookclub's "age"
+  const differenceInMonths = dayjs(now).diff(BOOK_CLUB_BIRTHDAY, 'month');
+  const years = Math.floor(differenceInMonths / 12);
+  const months = differenceInMonths - (years * 12)
+
+  console.log(closedMeetings)
 
   return (
     <Container className={styles.app}>
@@ -34,13 +40,13 @@ const Home: NextPage = () => {
         <main className={styles.main}>
           <Group position="apart" mb="40px">
             <Card w="160px" radius="xl" shadow="lg">
-              <Text align="center">2 years 7 month</Text>
+              <Text align="center">{years} years {months} month</Text>
             </Card>
             <Card w="160px" radius="xl" shadow="lg">
-              <Text align="center">8 members</Text>
+              <Text align="center">{actualMembers.length} members</Text>
             </Card>
             <Card w="160px" radius="xl" shadow="lg">
-              <Text align="center">31 meetings</Text>
+              <Text align="center">{closedMeetings.length} meetings</Text>
             </Card>
           </Group>
 
@@ -72,10 +78,12 @@ const Home: NextPage = () => {
               <Title className={styles.title}>Next Chosing Member:</Title>
               <Card shadow="xl" className={styles.nextChoosed}>
                 <List className={styles.members}>
-                  {members.map((member, index) => {
+                  {actualMembers.map((member, index) => {
                     return (
                       <List.Item className={styles.firstMeber} key={index}>
-                        <Link href="/">{member.name}</Link>
+                        <Link href="/">
+                          {member.firstName} {member.lastName}
+                        </Link>
                       </List.Item>
                     );
                   })}
@@ -92,11 +100,11 @@ const Home: NextPage = () => {
               Last Three Meetings
             </Title>
             <Group mb="40px" position="apart">
-              <BookCard></BookCard>
-              <BookCard></BookCard>
-              <BookCard></BookCard>
+              {closedMeetings.slice(0,3).map((meeting) => {
+                return <BookCard meeting={meeting} key={meeting.id}></BookCard>;
+              })}
             </Group>
-            <Link href="/">See all past meetings...</Link>
+            <Link href="/meetings">See all past meetings...</Link>
           </Container>
         </main>
       </Layout>

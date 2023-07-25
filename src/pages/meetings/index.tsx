@@ -1,5 +1,6 @@
 import styles from './index.module.css';
 import { type NextPage } from 'next';
+import { useState } from 'react';
 import { useForm, zodResolver } from '@mantine/form';
 import { z } from 'zod';
 import {
@@ -14,8 +15,9 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import Layout from '~/components/layout/layout';
-import { useState } from 'react';
-import { api, type RouterOutputs, type RouterInputs } from '~/utils/api';
+import { type Member } from '~/types/member';
+import { api, type RouterInputs } from '~/utils/api';
+
 
 const schema = z.object({
   title: z.string().min(1, { message: 'Title should have at least 1 letters' }),
@@ -34,11 +36,8 @@ const schema = z.object({
   isComplete: z.boolean()
 });
 
-type ParticipantsResponse = RouterOutputs['members']['getActiveMembersByDate'];
-type Participant = {
-  isVisited: boolean;
-  rating: null | number;
-} & ParticipantsResponse[0];
+
+
 
 const MeetingsPage: NextPage = () => {
   const [openForm, setOpenForm] = useState(false);
@@ -52,7 +51,7 @@ const MeetingsPage: NextPage = () => {
       cover: '',
       chosenById: '',
       isComplete: false,
-      participants: [] as Participant[]
+      participants: [] as Member[]
     }
   });
 
@@ -80,8 +79,10 @@ const MeetingsPage: NextPage = () => {
     }
   );
 
+  console.log(actualMembers)
+
   const fieldsMembers = form.values.participants.map(
-    (member: Participant, index) => (
+    (member: Member, index) => (
       <Group position="apart" mb="12px" key={member.id}>
         <Switch
           mr="12px"

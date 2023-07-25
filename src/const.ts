@@ -1,0 +1,1 @@
+export const BOOK_CLUB_BIRTHDAY = '2020/10/5'

@@ -13,6 +13,20 @@ export const meetingsRouter = createTRPCRouter({
       }
     });
   }),
+  getClosedMeetings: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.meeting.findMany({
+      where: {
+        isComplete: true,
+      },
+      include: {
+        participants: {
+          include: {
+            participant: true
+          }
+        }
+      }
+    });
+  }),
   getById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(({ input, ctx }) => {
@@ -33,13 +47,13 @@ export const meetingsRouter = createTRPCRouter({
         author: z.string(),
         cover: z.string().optional(),
         chosenById: z.number().optional(),
-        // participants: z.array(
-        //   z.object({
-        //     id: z.number(),
-        //     rating: z.union([z.number(), z.null()]),
-        //     isVisited: z.boolean(),
-        //   })
-        // ),
+        participants: z.array(
+          z.object({
+            id: z.number(),
+            rating: z.union([z.number(), z.null()]),
+            isVisited: z.boolean(),
+          })
+        ),
         isComplete: z.boolean()
       })
     )
@@ -52,9 +66,9 @@ export const meetingsRouter = createTRPCRouter({
         chosenById:input.chosenById ? input.chosenById : null, 
         isComplete: input.isComplete
       };
-      // if (input.chosenById) {
-      //   baseDataRequest.chosenById = input.chosenById
-      // }
+      if (input.chosenById) {
+        baseDataRequest.chosenById = input.chosenById
+      }
       return ctx.prisma.meeting.create({
         data: baseDataRequest
       });
@@ -95,11 +109,11 @@ export const meetingsRouter = createTRPCRouter({
           cover: input.cover,
           chosenById: input.chosenById,
           participants: {
-            // upsert: input.participants?.map((participant) => ({
-            //   where: { id: participant.id },
-            //   create: participant,
-            //   update: participant
-            // }))
+            upsert: input.participants?.map((participant) => ({
+              where: { id: participant.id },
+              create: participant,
+              update: participant
+            }))
           },
           isComplete: input.isComplete
         },
