@@ -14,7 +14,12 @@ import {
   Container,
   Progress
 } from '@mantine/core';
-import { calculateAverageRating } from '~/utils/utils';
+import {
+  calculateAverageRating,
+  getRatedParticipants,
+  getVisitedParticipants,
+  getVisitingProgress
+} from '~/utils/utils';
 
 interface BookCardProps {
   meeting: Meeting;
@@ -28,21 +33,36 @@ function BookCard({ meeting }: BookCardProps) {
       </Card>
     );
   }
-  const memberQuery = api.members.getById.useQuery({
+  const { data: actualMembers } = api.members.getActiveMembersByDate.useQuery({
+    date: meeting.date
+  });
+
+  if (!actualMembers) {
+    return <div>No members</div>;
+  }
+
+  const { data: choosedMember } = api.members.getById.useQuery({
     id: meeting.chosenById || 0
   });
-  const choosedMember = memberQuery.data;
 
   const averageRating = calculateAverageRating(meeting);
+  const visitedParticipants = getVisitedParticipants(actualMembers, meeting);
+  const ratedParticipants = getRatedParticipants(actualMembers, meeting);
+  const visitingProgress = getVisitingProgress(
+    visitedParticipants.length,
+    actualMembers.length
+  );
 
   return (
     <Card w="250px" shadow="xl" padding="12px">
       <Group position="apart" mb="12px">
         <Group>
-          <Rating fractions={4} defaultValue={averageRating} readOnly/>
+          <Rating fractions={16} defaultValue={averageRating} readOnly />
           <Text>({averageRating})</Text>
         </Group>
-        <Text>3/8</Text>
+        <Text>
+          {ratedParticipants.length}/{actualMembers.length}
+        </Text>
       </Group>
       <Group position="center" mb="12px">
         <Image
@@ -64,10 +84,17 @@ function BookCard({ meeting }: BookCardProps) {
       </Group>
 
       <Container p="0px">
-        <Progress value={75} label="75%" size="xl" radius="xl" />
+        <Progress
+          value={visitingProgress}
+          label={`${visitingProgress}%`}
+          size="xl"
+          radius="xl"
+        />
         <Group position="apart">
-          <Text>4/8</Text>
-          <Text>50%</Text>
+          <Text>
+            {visitedParticipants.length}/{actualMembers.length}
+          </Text>
+          <Text>{visitingProgress}</Text>
         </Group>
       </Container>
     </Card>

@@ -85,6 +85,10 @@ export const membersRouter = createTRPCRouter({
             lte: input.date,
           },
         },
+        include: {
+          meetings: true,
+          chosenMeetings: true
+        }
       });
     }),
 });

@@ -56,7 +56,6 @@ const MeetingsPage: NextPage = () => {
   });
 
   const { data: meetings } = api.meetings.getAll.useQuery();
-  //  const { data: members } = api.members.getAll.useQuery();
 
   const { data: actualMembers } = api.members.getActiveMembersByDate.useQuery(
     {
@@ -78,8 +77,6 @@ const MeetingsPage: NextPage = () => {
       }
     }
   );
-
-  console.log(actualMembers)
 
   const fieldsMembers = form.values.participants.map(
     (member: Member, index) => (
