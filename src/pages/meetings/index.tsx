@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import Layout from '~/components/layout/layout';
-import { type Member } from '~/types/member';
+import { type Participant } from '~/types/member';
 import { api, type RouterInputs } from '~/utils/api';
 
 
@@ -30,9 +30,13 @@ const schema = z.object({
   }),
   cover: z.string().optional(),
   chosenById: z.string().optional(),
-  // participants: z.array(z.object({
-  //   id: z.string()
-  // })),
+  participants: z.array(
+    z.object({
+      id: z.number(),
+      rating: z.union([z.number(), z.null()]),
+      isVisited: z.boolean(),
+    })
+  ),
   isComplete: z.boolean()
 });
 
@@ -51,7 +55,17 @@ const MeetingsPage: NextPage = () => {
       cover: '',
       chosenById: '',
       isComplete: false,
-      participants: [] as Member[]
+      participants: [] as Participant[]
+    }
+  });
+
+  const utils = api.useContext();
+  const createMeetingMutation = api.meetings.create.useMutation({
+    onSuccess: () => {
+      form.reset();
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      utils.meetings.getAll.invalidate();
+      setOpenForm(false);
     }
   });
 
@@ -68,7 +82,8 @@ const MeetingsPage: NextPage = () => {
           form.setFieldValue(
             'participants',
             data.map((member) => ({
-              ...member,
+              // ...member,
+              id: member.id,
               isVisited: false,
               rating: null
             }))
@@ -79,11 +94,12 @@ const MeetingsPage: NextPage = () => {
   );
 
   const fieldsMembers = form.values.participants.map(
-    (member: Member, index) => (
+    (member, index) => (
       <Group position="apart" mb="12px" key={member.id}>
         <Switch
           mr="12px"
-          label={`${member.firstName} ${member.lastName}`}
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          label={`${actualMembers?.find(person => person.id === member.id)?.firstName}`}
           {...form.getInputProps(`participants.${index}.isVisited`, {
             type: 'checkbox'
           })}
@@ -113,7 +129,8 @@ const MeetingsPage: NextPage = () => {
                         request.chosenById = Number(chosenById);
                       }
 
-                      console.log(request);
+                      createMeetingMutation.mutate(request);
+                      // console.log(request)
                     })}
                   >
                     <InputBase

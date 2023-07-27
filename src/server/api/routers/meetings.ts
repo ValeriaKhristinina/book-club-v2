@@ -64,7 +64,20 @@ export const meetingsRouter = createTRPCRouter({
         author: input.author,
         cover: input.cover,
         chosenById:input.chosenById ? input.chosenById : null, 
-        isComplete: input.isComplete
+        isComplete: input.isComplete,
+        participants: {
+          create: input.participants.map((participant) => {
+            return {
+              rating: participant.rating,
+              isVisited: participant.isVisited,
+              participant: {
+                connect: {
+                  id: participant.id
+                }
+              }
+            }
+          })
+        }
       };
       if (input.chosenById) {
         baseDataRequest.chosenById = input.chosenById

@@ -33,13 +33,13 @@ function BookCard({ meeting }: BookCardProps) {
       </Card>
     );
   }
-  const { data: actualMembers } = api.members.getActiveMembersByDate.useQuery({
+  const actualMembersQuery = api.members.getActiveMembersByDate.useQuery({
     date: meeting.date
   });
 
-  if (!actualMembers) {
-    return <div>No members</div>;
-  }
+  const actualMembers = actualMembersQuery.data ? actualMembersQuery.data : []
+
+
 
   const { data: choosedMember } = api.members.getById.useQuery({
     id: meeting.chosenById || 0
