@@ -1,6 +1,6 @@
 import styles from './index.module.css';
 import { type NextPage } from 'next';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useForm, zodResolver } from '@mantine/form';
 import { z } from 'zod';
 import {
@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   Chip,
+  Container,
   Group,
   InputBase,
   Rating,
@@ -17,7 +18,6 @@ import { DateInput } from '@mantine/dates';
 import Layout from '~/components/layout/layout';
 import { type Participant } from '~/types/member';
 import { api, type RouterInputs } from '~/utils/api';
-
 
 const schema = z.object({
   title: z.string().min(1, { message: 'Title should have at least 1 letters' }),
@@ -34,14 +34,11 @@ const schema = z.object({
     z.object({
       id: z.number(),
       rating: z.union([z.number(), z.null()]),
-      isVisited: z.boolean(),
+      isVisited: z.boolean()
     })
   ),
   isComplete: z.boolean()
 });
-
-
-
 
 const MeetingsPage: NextPage = () => {
   const [openForm, setOpenForm] = useState(false);
@@ -93,25 +90,24 @@ const MeetingsPage: NextPage = () => {
     }
   );
 
-  const fieldsMembers = form.values.participants.map(
-    (member, index) => (
-      <Group position="apart" mb="12px" key={member.id}>
-        <Switch
-          mr="12px"
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          label={`${actualMembers?.find(person => person.id === member.id)?.firstName}`}
-          {...form.getInputProps(`participants.${index}.isVisited`, {
-            type: 'checkbox'
-          })}
-        />
+  const fieldsMembers = form.values.participants.map((member, index) => (
+    <Group position="apart" mb="12px" key={member.id}>
+      <Switch
+        mr="12px"
+        label={`${
+          actualMembers?.find((person) => person.id === member.id)?.firstName
+        }`}
+        {...form.getInputProps(`participants.${index}.isVisited`, {
+          type: 'checkbox'
+        })}
+      />
 
-        <Rating
-          defaultValue={0}
-          {...form.getInputProps(`participants.${index}.rating`)}
-        />
-      </Group>
-    )
-  );
+      <Rating
+        defaultValue={0}
+        {...form.getInputProps(`participants.${index}.rating`)}
+      />
+    </Group>
+  ));
 
   return (
     <Layout>
@@ -123,9 +119,11 @@ const MeetingsPage: NextPage = () => {
                 <Card mr="12px" shadow="xl" padding="40px">
                   <form
                     onSubmit={form.onSubmit((values) => {
-                      const {chosenById, ...requestData} = values
-                      const request: RouterInputs['meetings']['create'] = {...requestData}
-                      if(chosenById) {
+                      const { chosenById, ...requestData } = values;
+                      const request: RouterInputs['meetings']['create'] = {
+                        ...requestData
+                      };
+                      if (chosenById) {
                         request.chosenById = Number(chosenById);
                       }
 
@@ -208,12 +206,23 @@ const MeetingsPage: NextPage = () => {
             </Button>
           )}
         </Box>
-        <Box>
+        <Box className={styles.meetingsList}>
           {meetings?.map((meeting) => {
             return (
-              <Card key={meeting.id}>
+              <Card className={styles.meetingCard} padding="xs" shadow='xl' key={meeting.id}>
                 <p>{meeting.title}</p>
                 <p>{meeting.author}</p>
+
+                <Container>
+                  {/* {meeting.participants.map((participant) => {
+                    return (
+                      <Fragment key={participant.participantId}>
+                        <Text>{participant.participant.firstName} {participant.participant.lastName}</Text>
+                        <Text>{participant.rating}</Text>
+                      </Fragment>
+                    );
+                  })} */}
+                </Container>
               </Card>
             );
           })}

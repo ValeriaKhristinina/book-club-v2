@@ -94,7 +94,7 @@ function BookCard({ meeting }: BookCardProps) {
           <Text>
             {visitedParticipants.length}/{actualMembers.length}
           </Text>
-          <Text>{visitingProgress}</Text>
+          <Text>{visitingProgress}%</Text>
         </Group>
       </Container>
     </Card>

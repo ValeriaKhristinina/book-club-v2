@@ -31,8 +31,7 @@ const Home: NextPage = () => {
   const differenceInMonths = dayjs(now).diff(BOOK_CLUB_BIRTHDAY, 'month');
   const years = Math.floor(differenceInMonths / 12);
   const months = differenceInMonths - (years * 12)
-
-  console.log(closedMeetings)
+  const lastThreeMeetings = closedMeetings.slice(-3).reverse()
 
   return (
     <Container className={styles.app}>
@@ -100,7 +99,7 @@ const Home: NextPage = () => {
               Last Three Meetings
             </Title>
             <Group mb="40px" position="apart">
-              {closedMeetings.slice(0,3).map((meeting) => {
+              {lastThreeMeetings.map((meeting) => {
                 return <BookCard meeting={meeting} key={meeting.id}></BookCard>;
               })}
             </Group>

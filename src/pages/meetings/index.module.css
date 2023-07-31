@@ -12,3 +12,14 @@
 .participants section {
   display: flex;
 }
+
+.meetingsList {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.meetingCard {
+  width: 300px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+}
