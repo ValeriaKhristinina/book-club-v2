@@ -1,5 +1,7 @@
+import { Meeting } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import dayjs from 'dayjs';
 
 export const meetingsRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -16,7 +18,7 @@ export const meetingsRouter = createTRPCRouter({
   getClosedMeetings: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.meeting.findMany({
       where: {
-        isComplete: true,
+        isComplete: true
       },
       include: {
         participants: {
@@ -51,7 +53,7 @@ export const meetingsRouter = createTRPCRouter({
           z.object({
             id: z.number(),
             rating: z.union([z.number(), z.null()]),
-            isVisited: z.boolean(),
+            isVisited: z.boolean()
           })
         ),
         isComplete: z.boolean()
@@ -63,7 +65,7 @@ export const meetingsRouter = createTRPCRouter({
         title: input.title,
         author: input.author,
         cover: input.cover,
-        chosenById:input.chosenById ? input.chosenById : null, 
+        chosenById: input.chosenById ? input.chosenById : null,
         isComplete: input.isComplete,
         participants: {
           create: input.participants.map((participant) => {
@@ -75,12 +77,12 @@ export const meetingsRouter = createTRPCRouter({
                   id: participant.id
                 }
               }
-            }
+            };
           })
         }
       };
       if (input.chosenById) {
-        baseDataRequest.chosenById = input.chosenById
+        baseDataRequest.chosenById = input.chosenById;
       }
       return ctx.prisma.meeting.create({
         data: baseDataRequest
@@ -134,5 +136,30 @@ export const meetingsRouter = createTRPCRouter({
           participants: true
         }
       });
+    }),
+  getNextMeetings: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.meeting.findMany({
+      where: {
+        isComplete: false
+      }
+    });
+  }),
+
+  getNextMeeting: publicProcedure.query(async ({ ctx }) => {
+    const meetings = await ctx.prisma.meeting.findMany({
+      where: {
+        isComplete: false,
+        date: {
+          gte: dayjs().startOf('day').toDate(),
+        }
+      },
+      orderBy: [
+        {
+          date: 'asc',
+        },
+      ]
     })
+
+    return meetings?.[0]
+  })
 });

@@ -66,7 +66,7 @@ const MeetingsPage: NextPage = () => {
     }
   });
 
-  const { data: meetings } = api.meetings.getAll.useQuery();
+  const { data: meetings } = api.meetings.getClosedMeetings.useQuery();
 
   const { data: actualMembers } = api.members.getActiveMembersByDate.useQuery(
     {
@@ -89,6 +89,8 @@ const MeetingsPage: NextPage = () => {
       }
     }
   );
+
+  const meetingsReverse = meetings ? [...meetings].reverse() : []
 
   const fieldsMembers = form.values.participants.map((member, index) => (
     <Group position="apart" mb="12px" key={member.id}>
@@ -207,7 +209,7 @@ const MeetingsPage: NextPage = () => {
           )}
         </Box>
         <Box className={styles.meetingsList}>
-          {meetings?.map((meeting) => {
+          {meetingsReverse.map((meeting) => {
             return (
               <Card className={styles.meetingCard} padding="xs" shadow='xl' key={meeting.id}>
                 <p>{meeting.title}</p>

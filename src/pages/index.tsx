@@ -23,15 +23,24 @@ const Home: NextPage = () => {
   const actualMembersQuery = api.members.getActiveMembersByDate.useQuery({
     date: now
   });
+  const closedMeetingQuery = api.meetings.getClosedMeetings.useQuery();
+  const nextMeetingQuery = api.meetings.getNextMeeting.useQuery();
+  const nextMeeting = nextMeetingQuery.data ? nextMeetingQuery.data : {title: '', chosenById: null, date: ''};
+
+  // const choosedParticipantQuery = api.members.getById.useQuery({
+  //   id: nextMeeting.chosenById || null
+  // })
+  
+
   const actualMembers = actualMembersQuery.data ? actualMembersQuery.data : [];
-  const closedMeetingQuery = api.meetings.getClosedMeetings.useQuery()
-  const closedMeetings =  closedMeetingQuery.data ? closedMeetingQuery.data : []
+  const closedMeetings = closedMeetingQuery.data ? closedMeetingQuery.data : [];
+
 
   //Calc bookclub's "age"
   const differenceInMonths = dayjs(now).diff(BOOK_CLUB_BIRTHDAY, 'month');
   const years = Math.floor(differenceInMonths / 12);
-  const months = differenceInMonths - (years * 12)
-  const lastThreeMeetings = closedMeetings.slice(-3).reverse()
+  const months = differenceInMonths - years * 12;
+  const lastThreeMeetings = closedMeetings.slice(-3).reverse();
 
   return (
     <Container className={styles.app}>
@@ -39,7 +48,9 @@ const Home: NextPage = () => {
         <main className={styles.main}>
           <Group position="apart" mb="40px">
             <Card w="160px" radius="xl" shadow="lg">
-              <Text align="center">{years} years {months} month</Text>
+              <Text align="center">
+                {years} years {months} month
+              </Text>
             </Card>
             <Card w="160px" radius="xl" shadow="lg">
               <Text align="center">{actualMembers.length} members</Text>
@@ -64,12 +75,19 @@ const Home: NextPage = () => {
 
                 <Group className={styles.nextMeetingInfo}>
                   <Text mb="40px" size="sm">
-                    Name book
+                    {nextMeeting.title}
                   </Text>
-                  <Text mb="40px" size="sm">
-                    Choosen by: <Link href="/">Lera Khristinina</Link>
-                  </Text>
-                  <Text size="sm">See you DD month YYYY</Text>
+                  {nextMeeting.chosenById !== null ? (
+                    <Text mb="40px" size="sm">
+                      Choosen by: <Link href="/">{}</Link>
+                    </Text>
+                  ) : (
+                    <Text mb="40px" size="sm">
+                      Nobody choosed
+                    </Text>
+                  )}
+
+                  <Text size="sm">See you {dayjs(nextMeeting.date).format('D MMM YYYY')}</Text>
                 </Group>
               </Card>
             </Group>
