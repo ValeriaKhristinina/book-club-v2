@@ -16,6 +16,7 @@ import {
 } from '@mantine/core';
 import {
   calculateAverageRating,
+  checkProgressColor,
   getRatedParticipants,
   getVisitedParticipants,
   getVisitingProgress
@@ -54,7 +55,7 @@ function BookCard({ meeting }: BookCardProps) {
   );
 
   return (
-    <Card w="250px" shadow="xl" padding="12px">
+    <Card w="250px" shadow="xl" padding="12px" className={styles.bookCard}>
       <Group position="apart" mb="12px">
         <Group>
           <Rating fractions={16} defaultValue={averageRating} readOnly />
@@ -89,6 +90,7 @@ function BookCard({ meeting }: BookCardProps) {
           label={`${visitingProgress}%`}
           size="xl"
           radius="xl"
+          color={checkProgressColor(visitingProgress)}
         />
         <Group position="apart">
           <Text>

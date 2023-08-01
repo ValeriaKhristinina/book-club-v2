@@ -18,6 +18,7 @@ import { DateInput } from '@mantine/dates';
 import Layout from '~/components/layout/layout';
 import { type Participant } from '~/types/member';
 import { api, type RouterInputs } from '~/utils/api';
+import BookCard from '~/components/book-card/book-card';
 
 const schema = z.object({
   title: z.string().min(1, { message: 'Title should have at least 1 letters' }),
@@ -211,21 +212,7 @@ const MeetingsPage: NextPage = () => {
         <Box className={styles.meetingsList}>
           {meetingsReverse.map((meeting) => {
             return (
-              <Card className={styles.meetingCard} padding="xs" shadow='xl' key={meeting.id}>
-                <p>{meeting.title}</p>
-                <p>{meeting.author}</p>
-
-                <Container>
-                  {/* {meeting.participants.map((participant) => {
-                    return (
-                      <Fragment key={participant.participantId}>
-                        <Text>{participant.participant.firstName} {participant.participant.lastName}</Text>
-                        <Text>{participant.rating}</Text>
-                      </Fragment>
-                    );
-                  })} */}
-                </Container>
-              </Card>
+              <BookCard meeting={meeting} key={meeting.id}></BookCard>
             );
           })}
         </Box>

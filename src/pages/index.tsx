@@ -116,7 +116,7 @@ const Home: NextPage = () => {
             <Title className={styles.title} size="sm">
               Last Three Meetings
             </Title>
-            <Group mb="40px" position="apart">
+            <Group position="apart">
               {lastThreeMeetings.map((meeting) => {
                 return <BookCard meeting={meeting} key={meeting.id}></BookCard>;
               })}

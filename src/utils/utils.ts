@@ -1,3 +1,4 @@
+import { ProgressColor } from "~/const";
 import { type Meeting } from "~/types/meeting";
 import { type Member } from "~/types/member";
 
@@ -22,3 +23,15 @@ export const getRatedParticipants = (members: Member[], meeting: Meeting) => {
 
 
 export const getVisitingProgress = (visitingPersons: number, allPersons: number): number => Math.round(((10 * visitingPersons) / allPersons) * 10)
+
+export const checkProgressColor = (progress: number): string => {
+  if (progress <= 30) {
+    return ProgressColor.Red
+  } else if (progress > 30 && progress <= 60) {
+    return ProgressColor.Yellow
+  } else if (progress > 60 && progress <= 100) {
+    return ProgressColor.Green
+  } else {
+    return 'invalid percentage'
+  }
+}
