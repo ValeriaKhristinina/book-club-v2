@@ -35,3 +35,16 @@ export const checkProgressColor = (progress: number): string => {
     return 'invalid percentage'
   }
 }
+
+export const createQueue = (closedMeetings: Meeting[]) => {
+  //find last choosing member 
+  const reversedClosedMeetings = [...closedMeetings].reverse()
+  const findLastChoosedMemberId = reversedClosedMeetings.find(meeting => meeting.chosenById != null)?.chosenById
+  console.log(findLastChoosedMemberId)
+
+  // create array last 4 closed meetings 
+  const lastFourMeetings = reversedClosedMeetings.slice(0,4)
+  console.log(lastFourMeetings)
+
+  return lastFourMeetings
+}

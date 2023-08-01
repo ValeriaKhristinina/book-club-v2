@@ -20,27 +20,37 @@ const Home: NextPage = () => {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
-  const actualMembersQuery = api.members.getActiveMembersByDate.useQuery({
+  const {data: actualMembers} = api.members.getActiveMembersByDate.useQuery({
     date: now
   });
-  const closedMeetingQuery = api.meetings.getClosedMeetings.useQuery();
-  const nextMeetingQuery = api.meetings.getNextMeeting.useQuery();
-  const nextMeeting = nextMeetingQuery.data ? nextMeetingQuery.data : {title: '', chosenById: null, date: ''};
+  const {data: closedMeetings} = api.meetings.getClosedMeetings.useQuery();
+  const {data: nextMeeting} = api.meetings.getNextMeeting.useQuery();
 
-  // const choosedParticipantQuery = api.members.getById.useQuery({
-  //   id: nextMeeting.chosenById || null
-  // })
-  
-
-  const actualMembers = actualMembersQuery.data ? actualMembersQuery.data : [];
-  const closedMeetings = closedMeetingQuery.data ? closedMeetingQuery.data : [];
-
+  const lastThreeMeetings = closedMeetings?  closedMeetings?.slice(-3).reverse() : []
 
   //Calc bookclub's "age"
   const differenceInMonths = dayjs(now).diff(BOOK_CLUB_BIRTHDAY, 'month');
   const years = Math.floor(differenceInMonths / 12);
   const months = differenceInMonths - years * 12;
-  const lastThreeMeetings = closedMeetings.slice(-3).reverse();
+
+  // const reversedClosedMeetings = [...closedMeetings].reverse()
+  // const lastChoosedMemberId = reversedClosedMeetings.find(meeting => meeting.chosenById != null)?.chosenById
+
+  // if (lastChoosedMemberId) {
+  //   const lastChoosedMemberQuery = api.members.getById.useQuery({
+  //     id: lastChoosedMemberId
+  //   })
+  //   setLastChoosedMember(lastChoosedMemberQuery.data)
+  // }
+
+  // console.log("choosedMember", choosedMember)
+  
+  // console.log(actualMembers.indexOf(lastChoosedMemberQuery))
+  // const firstCutArray = actualMembers.slice(actualMembers.indexOf(lastChoosedMemberId) + 1)
+  // const secondCutArray = actualMembers.slice(0, actualMembers.indexOf(lastChoosedMemberId))
+  // const newArr = firstCutArray.concat(secondCutArray)
+  
+  // console.log(newArr)
 
   return (
     <Container className={styles.app}>
@@ -53,10 +63,10 @@ const Home: NextPage = () => {
               </Text>
             </Card>
             <Card w="160px" radius="xl" shadow="lg">
-              <Text align="center">{actualMembers.length} members</Text>
+              <Text align="center">{actualMembers?.length} members</Text>
             </Card>
             <Card w="160px" radius="xl" shadow="lg">
-              <Text align="center">{closedMeetings.length} meetings</Text>
+              <Text align="center">{closedMeetings?.length} meetings</Text>
             </Card>
           </Group>
 
@@ -75,11 +85,11 @@ const Home: NextPage = () => {
 
                 <Group className={styles.nextMeetingInfo}>
                   <Text mb="40px" size="sm">
-                    {nextMeeting.title}
+                    {nextMeeting?.title}
                   </Text>
-                  {nextMeeting.chosenById !== null ? (
+                  {nextMeeting?.chosenById !== null ? (
                     <Text mb="40px" size="sm">
-                      Choosen by: <Link href="/">{}</Link>
+                      Choosen by: <Link href={`/member/${nextMeeting?.chosenById}`}>{nextMeeting?.chosenBy?.firstName} {nextMeeting?.chosenBy?.lastName} </Link>
                     </Text>
                   ) : (
                     <Text mb="40px" size="sm">
@@ -87,7 +97,7 @@ const Home: NextPage = () => {
                     </Text>
                   )}
 
-                  <Text size="sm">See you {dayjs(nextMeeting.date).format('D MMM YYYY')}</Text>
+                  <Text size="sm">See you {dayjs(nextMeeting?.date).format('D MMM YYYY')}</Text>
                 </Group>
               </Card>
             </Group>
@@ -95,7 +105,7 @@ const Home: NextPage = () => {
               <Title className={styles.title}>Next Chosing Member:</Title>
               <Card shadow="xl" className={styles.nextChoosed}>
                 <List className={styles.members}>
-                  {actualMembers.map((member, index) => {
+                  {actualMembers?.map((member, index) => {
                     return (
                       <List.Item className={styles.firstMeber} key={index}>
                         <Link href="/">

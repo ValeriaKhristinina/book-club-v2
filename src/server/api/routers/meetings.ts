@@ -157,7 +157,10 @@ export const meetingsRouter = createTRPCRouter({
         {
           date: 'asc',
         },
-      ]
+      ],
+      include: {
+        chosenBy: true
+      }
     })
 
     return meetings?.[0]
