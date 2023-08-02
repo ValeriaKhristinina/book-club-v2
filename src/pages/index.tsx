@@ -15,8 +15,13 @@ import Link from 'next/link';
 import Layout from '~/components/layout/layout';
 import BookCard from '../components/book-card/book-card';
 import { BOOK_CLUB_BIRTHDAY } from '~/const';
+import { useEffect, useState } from 'react';
+import { Meeting, Member } from '@prisma/client';
 
 const Home: NextPage = () => {
+  const [lastChoosedMemberId, setLastChoosedMemberId] = useState(0)
+  const [members, setMembers] = useState<Member[]>([])
+  const [nextMeeting, setNextMeeting] = useState<Meeting>()
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
@@ -24,31 +29,50 @@ const Home: NextPage = () => {
     date: now
   });
   const {data: closedMeetings} = api.meetings.getClosedMeetings.useQuery();
-  const {data: nextMeeting} = api.meetings.getNextMeeting.useQuery();
-
+  const {data: meetingNext} = api.meetings.getNextMeeting.useQuery();
   const lastThreeMeetings = closedMeetings?  closedMeetings?.slice(-3).reverse() : []
+
+  useEffect(()=>{
+    if(actualMembers) {
+      setMembers(actualMembers)
+    }
+    if(meetingNext) {
+      setNextMeeting(meetingNext)
+    }
+  }, [actualMembers, meetingNext])
 
   //Calc bookclub's "age"
   const differenceInMonths = dayjs(now).diff(BOOK_CLUB_BIRTHDAY, 'month');
   const years = Math.floor(differenceInMonths / 12);
   const months = differenceInMonths - years * 12;
 
-  // const reversedClosedMeetings = [...closedMeetings].reverse()
-  // const lastChoosedMemberId = reversedClosedMeetings.find(meeting => meeting.chosenById != null)?.chosenById
 
-  // if (lastChoosedMemberId) {
-  //   const lastChoosedMemberQuery = api.members.getById.useQuery({
-  //     id: lastChoosedMemberId
-  //   })
-  //   setLastChoosedMember(lastChoosedMemberQuery.data)
-  // }
 
-  // console.log("choosedMember", choosedMember)
+
+
+  // find last member who choose book
+  // const indexChoosingPerson = members.findIndex(meetingNext?.chosenBy);
+
+  const reversedClosedMeetings = closedMeetings ?  [...closedMeetings].reverse() : []
+
+  const lastChoosedMember = reversedClosedMeetings.find(meeting => meeting.chosenById != null)?.chosenBy
+
+
+  console.log(lastChoosedMember)
+  const lastChoosedMemberIndex = members.findIndex(member => member.id === lastChoosedMember?.id)
+  console.log(lastChoosedMemberIndex)
+
+
+  if (lastChoosedMemberIndex) {
+    const firstCutArray = members ?  members.slice(lastChoosedMemberIndex + 1) : []
+    const secondCutArray = members.slice(0, lastChoosedMemberIndex)
+    const newArr = firstCutArray.concat(secondCutArray)
+    console.log(newArr)
+  }
   
-  // console.log(actualMembers.indexOf(lastChoosedMemberQuery))
-  // const firstCutArray = actualMembers.slice(actualMembers.indexOf(lastChoosedMemberId) + 1)
-  // const secondCutArray = actualMembers.slice(0, actualMembers.indexOf(lastChoosedMemberId))
-  // const newArr = firstCutArray.concat(secondCutArray)
+  
+  
+  
   
   // console.log(newArr)
 
@@ -89,7 +113,7 @@ const Home: NextPage = () => {
                   </Text>
                   {nextMeeting?.chosenById !== null ? (
                     <Text mb="40px" size="sm">
-                      Choosen by: <Link href={`/member/${nextMeeting?.chosenById}`}>{nextMeeting?.chosenBy?.firstName} {nextMeeting?.chosenBy?.lastName} </Link>
+                      Choosen by: <Link href={`/member/`}>{nextMeeting?.chosenBy?.firstName} {nextMeeting?.chosenBy?.lastName} </Link>
                     </Text>
                   ) : (
                     <Text mb="40px" size="sm">

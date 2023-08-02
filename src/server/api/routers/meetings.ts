@@ -1,4 +1,3 @@
-import { Meeting } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 import dayjs from 'dayjs';
@@ -25,7 +24,8 @@ export const meetingsRouter = createTRPCRouter({
           include: {
             participant: true
           }
-        }
+        }, 
+        chosenBy: true
       }
     });
   }),
