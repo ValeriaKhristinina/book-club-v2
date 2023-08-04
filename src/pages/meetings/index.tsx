@@ -8,7 +8,6 @@ import {
   Button,
   Card,
   Chip,
-  Container,
   Group,
   InputBase,
   Rating,

@@ -35,16 +35,40 @@ export const checkProgressColor = (progress: number): string => {
     return 'invalid percentage'
   }
 }
-
-export const createQueue = (closedMeetings: Meeting[]) => {
-  //find last choosing member 
-  const reversedClosedMeetings = [...closedMeetings].reverse()
-  const findLastChoosedMemberId = reversedClosedMeetings.find(meeting => meeting.chosenById != null)?.chosenById
-  console.log(findLastChoosedMemberId)
-
-  // create array last 4 closed meetings 
-  const lastFourMeetings = reversedClosedMeetings.slice(0,4)
-  console.log(lastFourMeetings)
-
-  return lastFourMeetings
+type VisitingStructure = {
+  [key: number]: number
 }
+export const checkVisitingParticipants = (meetings: Meeting[]): VisitingStructure => {
+  const newObj: VisitingStructure = {}
+  
+  meetings.map((item) => {
+    if (!item.participants) {
+      return false
+    }
+    item.participants.map((person) => {
+      if (!person.isVisited) {
+        return false
+      }
+      if (typeof newObj[person.participantId] !== "undefined") {
+        newObj[person.participantId] += 1
+      } else {
+        newObj[person.participantId] = 1;
+      }
+      return true
+    })
+    return true;
+  })
+  return newObj;
+}
+
+export const createQueue = (members: Member[], lastChoosedMember: Member, visitingParticipants: VisitingStructure) => {
+  let newQueque: Member[] = []
+  const lastChoosedMemberIndex = members.findIndex(member => member.id === lastChoosedMember?.id)
+    const firstCutArray = members ?  members.slice(lastChoosedMemberIndex + 1) : []
+    const secondCutArray = members.slice(0, lastChoosedMemberIndex + 1)
+    const newArr = firstCutArray.concat(secondCutArray)
+    
+    newQueque = newArr.filter((participant) => visitingParticipants[participant.id] >= 2)
+    return newQueque
+}
+

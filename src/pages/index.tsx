@@ -12,23 +12,26 @@ import {
   List
 } from '@mantine/core';
 import Link from 'next/link';
+import { type Member } from '~/types/member';
+import { type Meeting } from '~/types/meeting';
 import Layout from '~/components/layout/layout';
 import BookCard from '../components/book-card/book-card';
 import { BOOK_CLUB_BIRTHDAY } from '~/const';
 import { useEffect, useState } from 'react';
-import { Meeting, Member } from '@prisma/client';
+import {checkVisitingParticipants, createQueue } from '~/utils/utils';
+
 
 const Home: NextPage = () => {
-  const [lastChoosedMemberId, setLastChoosedMemberId] = useState(0)
   const [members, setMembers] = useState<Member[]>([])
   const [nextMeeting, setNextMeeting] = useState<Meeting>()
+  const [closedMeetings, setClosedMeetings] = useState<Meeting[]>() 
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
   const {data: actualMembers} = api.members.getActiveMembersByDate.useQuery({
     date: now
   });
-  const {data: closedMeetings} = api.meetings.getClosedMeetings.useQuery();
+  const {data: closedMeetingsQuery} = api.meetings.getClosedMeetings.useQuery();
   const {data: meetingNext} = api.meetings.getNextMeeting.useQuery();
   const lastThreeMeetings = closedMeetings?  closedMeetings?.slice(-3).reverse() : []
 
@@ -39,42 +42,28 @@ const Home: NextPage = () => {
     if(meetingNext) {
       setNextMeeting(meetingNext)
     }
-  }, [actualMembers, meetingNext])
+    if(closedMeetingsQuery) {
+      setClosedMeetings(closedMeetingsQuery)
+    }
+  }, [actualMembers, meetingNext, closedMeetingsQuery])
 
   //Calc bookclub's "age"
   const differenceInMonths = dayjs(now).diff(BOOK_CLUB_BIRTHDAY, 'month');
   const years = Math.floor(differenceInMonths / 12);
   const months = differenceInMonths - years * 12;
 
-
-
-
-
-  // find last member who choose book
-  // const indexChoosingPerson = members.findIndex(meetingNext?.chosenBy);
-
   const reversedClosedMeetings = closedMeetings ?  [...closedMeetings].reverse() : []
-
+  const lastFourMeetings = reversedClosedMeetings.slice(0,4)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const lastChoosedMember = reversedClosedMeetings.find(meeting => meeting.chosenById != null)?.chosenBy
 
-
   console.log(lastChoosedMember)
-  const lastChoosedMemberIndex = members.findIndex(member => member.id === lastChoosedMember?.id)
-  console.log(lastChoosedMemberIndex)
 
-
-  if (lastChoosedMemberIndex) {
-    const firstCutArray = members ?  members.slice(lastChoosedMemberIndex + 1) : []
-    const secondCutArray = members.slice(0, lastChoosedMemberIndex)
-    const newArr = firstCutArray.concat(secondCutArray)
-    console.log(newArr)
-  }
+  const visitingStructure = checkVisitingParticipants(lastFourMeetings)
+  console.log(visitingStructure)
   
-  
-  
-  
-  
-  // console.log(newArr)
+  const newQueue = createQueue(members, lastChoosedMember, visitingStructure)
+  console.log(newQueue)
 
   return (
     <Container className={styles.app}>
@@ -129,10 +118,10 @@ const Home: NextPage = () => {
               <Title className={styles.title}>Next Chosing Member:</Title>
               <Card shadow="xl" className={styles.nextChoosed}>
                 <List className={styles.members}>
-                  {actualMembers?.map((member, index) => {
+                  {newQueue.slice(0,4).map((member, index) => {
                     return (
                       <List.Item className={styles.firstMeber} key={index}>
-                        <Link href="/">
+                        <Link href={`/member/${member.id}`}>
                           {member.firstName} {member.lastName}
                         </Link>
                       </List.Item>
