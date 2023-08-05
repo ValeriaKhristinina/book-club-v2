@@ -1,11 +1,18 @@
+import styles from './members-table.module.css';
 import { Avatar, Table, Group, Text, ScrollArea, Badge } from '@mantine/core';
-import { Member } from '@prisma/client';
+import { type Member } from '@prisma/client';
+import Link from 'next/link';
+import { ActionIcon } from '@mantine/core';
+import { Pencil } from 'tabler-icons-react';
+import { useState } from 'react';
 
 interface MembersTableProps {
   members: Member[] | undefined;
 }
 
 export function MembersTable({ members }: MembersTableProps) {
+  const [isEditingMode, setIsEditingMode] = useState(false)
+  const isAuth = true
 
   if (!members) {
     return (
@@ -19,9 +26,11 @@ export function MembersTable({ members }: MembersTableProps) {
         <Group spacing="sm">
           <Avatar size={40} radius={40}>{item.firstName.charAt(0)}{item.lastName.charAt(0)}</Avatar>
           <div>
+            <Link href={`/member/${item.id}`}>
             <Text fz="sm" fw={500}>
               {item.firstName} {item.lastName}
             </Text>
+            </Link>
           </div>
         </Group>
       </td>
@@ -40,6 +49,10 @@ export function MembersTable({ members }: MembersTableProps) {
           </Badge>
         )}
       </td>
+      {isAuth && (
+        <td className={styles.changeField}><ActionIcon onClick={()=> setIsEditingMode(!isEditingMode)}><Pencil/></ActionIcon></td>
+      )}
+      
     </tr>
   ));
 
@@ -53,6 +66,10 @@ export function MembersTable({ members }: MembersTableProps) {
             <th>Last active</th>
             <th>Vsited last four meetings</th>
             <th>Status</th>
+            {isAuth && (
+              <th>Change</th>
+            )}
+            
           </tr>
         </thead>
         <tbody>{rows}</tbody>

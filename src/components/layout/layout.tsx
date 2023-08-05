@@ -17,7 +17,7 @@ function Layout({ children }: LayoutProps) {
             </Title>
           </Group>
           <Group>
-            <Button>Login</Button>
+            <Link href={'/login'}>Login</Link>
           </Group>
         </Group>
       </header>
