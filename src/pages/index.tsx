@@ -73,20 +73,20 @@ const Home: NextPage = () => {
   console.log(newQueue);
 
   return (
-      <Container className={styles.app}>
+      <Container className= {styles.appContainer}>
         <Layout>
           <main className={styles.main}>
             <Group position="apart" mb="40px">
               <Card w="160px" radius="xl" shadow="lg">
-                <Text align="center">
+                <Text size="sm" align="center">
                   {years} years {months} month
                 </Text>
               </Card>
               <Card w="160px" radius="xl" shadow="lg">
-                <Text align="center">{actualMembers?.length} members</Text>
+                <Text size="sm" align="center">{actualMembers?.length} members</Text>
               </Card>
               <Card w="160px" radius="xl" shadow="lg">
-                <Text align="center">{closedMeetings?.length} meetings</Text>
+                <Text size="sm" align="center">{closedMeetings?.length} meetings</Text>
               </Card>
             </Group>
 

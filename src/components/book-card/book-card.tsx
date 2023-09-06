@@ -55,13 +55,13 @@ function BookCard({ meeting }: BookCardProps) {
   );
 
   return (
-    <Card w="250px" shadow="xl" padding="12px" className={styles.bookCard}>
+    <Card w="220px" shadow="xl" padding="12px" className={styles.bookCard}>
       <Group position="apart" mb="12px">
         <Group>
           <Rating fractions={16} defaultValue={averageRating} readOnly />
-          <Text>({averageRating})</Text>
+          <Text size="xs">({averageRating})</Text>
         </Group>
-        <Text>
+        <Text size="xs">
           {ratedParticipants.length}/{actualMembers.length}
         </Text>
       </Group>
@@ -77,11 +77,11 @@ function BookCard({ meeting }: BookCardProps) {
         {meeting.title} by {meeting.author}
       </Title>
       <Group position="apart" mb="12px">
-        <Avatar color="cyan" radius="xl">
+        <Avatar size="sm" radius="xl">
           {choosedMember?.firstName.charAt(0)}
           {choosedMember?.lastName.charAt(0)}
         </Avatar>
-        <Text>{dayjs(meeting.date).format('D MMM YYYY')}</Text>
+        <Text size="xs">{dayjs(meeting.date).format('D MMM YYYY')}</Text>
       </Group>
 
       <Container p="0px">
@@ -93,10 +93,10 @@ function BookCard({ meeting }: BookCardProps) {
           color={checkProgressColor(visitingProgress)}
         />
         <Group position="apart">
-          <Text>
+          <Text size="xs">
             {visitedParticipants.length}/{actualMembers.length}
           </Text>
-          <Text>{visitingProgress}%</Text>
+          <Text size="xs">{visitingProgress}%</Text>
         </Group>
       </Container>
     </Card>
