@@ -1,9 +1,8 @@
-import { Button, Card, Group, InputBase } from '@mantine/core';
+import { Button, Card, Group, InputBase, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import Layout from '~/components/layout/layout';
 import { z } from 'zod';
-import { SignIn } from "@clerk/nextjs";
-
+import Link from 'next/link';
 
 const schema = z.object({
   email: z.string().min(1, { message: 'Email should have at least 1 letters' }),
@@ -21,8 +20,6 @@ function LoginPage() {
   });
   return (
     <Layout>
-      <>
-      <SignIn/>
       <Group position="center" h='80vh'>
         <Card w="500px" shadow="xl" p="40px 24px">
           <form action="">
@@ -46,7 +43,6 @@ function LoginPage() {
           </form>
         </Card>
       </Group>
-      </>
     </Layout>
   );
 }
