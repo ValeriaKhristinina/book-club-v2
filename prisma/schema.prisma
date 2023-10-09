@@ -37,8 +37,8 @@ model Member {
 }
 
 model MeetingParticipants {
-  meeting     Meeting     @relation(fields: [meetingId], references: [id])
-  participant Member @relation(fields: [participantId], references: [id])
+  meeting     Meeting     @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  participant Member @relation(fields: [participantId], references: [id], onDelete: Cascade)
 
   meetingId   Int
   participantId Int

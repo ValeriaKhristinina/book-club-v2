@@ -66,7 +66,7 @@ const MeetingsPage: NextPage = () => {
     }
   });
 
-  const { data: meetings } = api.meetings.getClosedMeetings.useQuery();
+  const { data: meetings } = api.meetings.getAll.useQuery();
 
   const { data: actualMembers } = api.members.getActiveMembersByDate.useQuery(
     {

@@ -5,3 +5,9 @@
   display: flex;
   justify-content: center;
 }
+
+.changeMeeting {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

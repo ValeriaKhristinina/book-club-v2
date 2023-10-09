@@ -10,7 +10,8 @@ export const meetingsRouter = createTRPCRouter({
           include: {
             participant: true
           }
-        }
+        },
+        chosenBy: true
       }
     });
   }),
@@ -24,7 +25,7 @@ export const meetingsRouter = createTRPCRouter({
           include: {
             participant: true
           }
-        }, 
+        },
         chosenBy: true
       }
     });
@@ -92,50 +93,60 @@ export const meetingsRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.number(),
-        date: z.date().optional(),
-        title: z.string().optional(),
-        author: z.string().optional(),
+        date: z.date(),
+        title: z.string(),
+        author: z.string(),
         cover: z.string().optional(),
         chosenById: z.number().optional(),
-        participants: z
-          .array(
-            z.object({
-              id: z.number().optional(),
-              created_at: z.date().optional(),
-              firstName: z.string().optional(),
-              lastName: z.string().optional(),
-              joinDate: z.date().optional(),
-              exitDate: z.date().optional()
-            })
-          )
-          .optional(),
-        isComplete: z.boolean().optional()
+        participants: z.array(
+          z.object({
+            id: z.number(),
+            rating: z.union([z.number(), z.null()]),
+            isVisited: z.boolean()
+          })
+        ),
+        isComplete: z.boolean()
       })
     )
     .mutation(({ input, ctx }) => {
-      return ctx.prisma.meeting.update({
-        where: {
-          id: input.id
-        },
-        data: {
-          date: input.date,
-          title: input.title,
-          author: input.author,
-          cover: input.cover,
-          chosenById: input.chosenById,
-          participants: {
-            upsert: input.participants?.map((participant) => ({
-              where: { id: participant.id },
-              create: participant,
-              update: participant
-            }))
-          },
-          isComplete: input.isComplete
-        },
-        include: {
-          participants: true
+      const baseDataRequest = {
+        date: input.date,
+        title: input.title,
+        author: input.author,
+        cover: input.cover,
+        chosenById: input.chosenById ? input.chosenById : null,
+        isComplete: input.isComplete,
+        participants: {
+          create: input.participants.map((participant) => {
+            return {
+              rating: participant.rating,
+              isVisited: participant.isVisited,
+              participant: {
+                connect: {
+                  id: participant.id
+                }
+              }
+            };
+          })
         }
-      });
+      };
+      if (input.chosenById) {
+        baseDataRequest.chosenById = input.chosenById;
+      }
+
+      return ctx.prisma.$transaction([
+        ctx.prisma.meetingParticipants.deleteMany({
+          where: {
+            meetingId: input.id
+          }
+        }),
+        ctx.prisma.meeting.update({
+          where: {
+            id: input.id
+          },
+          data: baseDataRequest
+        })
+      ]);
     }),
   getNextMeetings: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.meeting.findMany({
@@ -150,19 +161,19 @@ export const meetingsRouter = createTRPCRouter({
       where: {
         isComplete: false,
         date: {
-          gte: dayjs().startOf('day').toDate(),
+          gte: dayjs().startOf('day').toDate()
         }
       },
       orderBy: [
         {
-          date: 'asc',
-        },
+          date: 'asc'
+        }
       ],
       include: {
         chosenBy: true
       }
-    })
+    });
 
-    return meetings?.[0]
+    return meetings?.[0];
   })
 });

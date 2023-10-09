@@ -64,13 +64,13 @@ const Home: NextPage = () => {
     (meeting) => meeting.chosenById != null
   )?.chosenBy;
 
-  console.log(lastChoosedMember);
+  console.log('lastChoosedMember',lastChoosedMember);
 
   const visitingStructure = checkVisitingParticipants(lastFourMeetings);
   console.log(visitingStructure);
 
   const newQueue = createQueue(members, lastChoosedMember, visitingStructure);
-  console.log(newQueue);
+  console.log('newQueue', newQueue);
 
   return (
       <Container className= {styles.appContainer}>
@@ -98,7 +98,7 @@ const Home: NextPage = () => {
                 <Card shadow="xl" className={styles.nextChoosed}>
                   <Group className={styles.nextMeetingCover}>
                     <Image
-                      src="https://picsum.photos/150/220"
+                      src="/book-image.png"
                       alt="next meeting cover"
                     />
                   </Group>
@@ -131,7 +131,7 @@ const Home: NextPage = () => {
                 <Title className={styles.title}>Next Chosing Member:</Title>
                 <Card shadow="xl" className={styles.nextChoosed}>
                   <List className={styles.members}>
-                    {newQueue.slice(0, 4).map((member, index) => {
+                    {newQueue.slice(1, 6).map((member, index) => {
                       return (
                         <List.Item className={styles.firstMeber} key={index}>
                           <Link href={`/member/${member.id}`}>

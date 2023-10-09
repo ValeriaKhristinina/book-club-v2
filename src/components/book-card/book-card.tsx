@@ -3,6 +3,8 @@ import styles from './book-card.module.css';
 import dayjs from 'dayjs';
 import { api } from '~/utils/api';
 import { type Meeting } from '~/types/meeting';
+import { Pencil } from 'tabler-icons-react';
+import Link from 'next/link'
 import {
   Card,
   Group,
@@ -12,7 +14,8 @@ import {
   Title,
   Avatar,
   Container,
-  Progress
+  Progress,
+  ActionIcon
 } from '@mantine/core';
 import {
   calculateAverageRating,
@@ -21,6 +24,7 @@ import {
   getVisitedParticipants,
   getVisitingProgress
 } from '~/utils/utils';
+
 
 interface BookCardProps {
   meeting: Meeting;
@@ -60,6 +64,13 @@ function BookCard({ meeting }: BookCardProps) {
         <Group>
           <Rating fractions={16} defaultValue={averageRating} readOnly />
           <Text size="xs">({averageRating})</Text>
+          <Group className={styles.changeMeeting}>
+            <Link href={`/meetings/${meeting.id}`}>
+              <ActionIcon>
+                <Pencil size="1.125rem" />
+              </ActionIcon>
+            </Link>
+          </Group>
         </Group>
         <Text size="xs">
           {ratedParticipants.length}/{actualMembers.length}
@@ -68,8 +79,8 @@ function BookCard({ meeting }: BookCardProps) {
       <Group position="center" mb="12px">
         <Image
           className={styles.center}
-          src="https://picsum.photos/150/220"
-          width="150px"
+          src="/book-image.png"
+          width="120px"
           alt="rando photo"
         />
       </Group>
@@ -81,7 +92,7 @@ function BookCard({ meeting }: BookCardProps) {
           {choosedMember?.firstName.charAt(0)}
           {choosedMember?.lastName.charAt(0)}
         </Avatar>
-        <Text size="xs">{dayjs(meeting.date).format('D MMM YYYY')}</Text>
+        <Text size="xs">{dayjs(meeting.date).format("D MMM YYYY")}</Text>
       </Group>
 
       <Container p="0px">

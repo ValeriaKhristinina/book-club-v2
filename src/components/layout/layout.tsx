@@ -1,5 +1,5 @@
 import styles from './layout.module.css';
-import { Button, Container, Group, Title, Text } from '@mantine/core';
+import { Container, Group, Title, Text } from '@mantine/core';
 import Link from 'next/link';
 
 interface LayoutProps {
