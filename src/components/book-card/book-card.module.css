@@ -8,6 +8,11 @@
 
 .changeMeeting {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+}
+
+.changeMeeting:hover {
+  opacity: 1;
 }
