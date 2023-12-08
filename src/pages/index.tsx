@@ -28,6 +28,8 @@ const Home: NextPage = () => {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
+  console.log(nextMeeting)
+
   const { data: actualMembers } = api.members.getActiveMembersByDate.useQuery({
     date: now
   });
@@ -64,13 +66,8 @@ const Home: NextPage = () => {
     (meeting) => meeting.chosenById != null
   )?.chosenBy;
 
-  console.log('lastChoosedMember',lastChoosedMember);
-
   const visitingStructure = checkVisitingParticipants(lastFourMeetings);
-  console.log(visitingStructure);
-
   const newQueue = createQueue(members, lastChoosedMember, visitingStructure);
-  console.log('newQueue', newQueue);
 
   return (
       <Container className= {styles.appContainer}>

@@ -17,8 +17,6 @@ export function MembersTable({ members }: MembersTableProps) {
   const [isEditingMode, setIsEditingMode] = useState(false);
   const isAuth = true;
   const { data: meetings } = api.meetings.getAll.useQuery();
-  console.log(meetings)
-
 
   if (!members) {
     return (
@@ -36,8 +34,6 @@ export function MembersTable({ members }: MembersTableProps) {
     return lastMeeting
 
   };
-
-  console.log(checkedLastVisitedMeeting(members[1], meetings))
 
   const rows = members.map((item) => (
     <tr key={item.id}>
