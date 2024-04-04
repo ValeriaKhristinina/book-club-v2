@@ -2,7 +2,6 @@ import { Button, Card, Group, InputBase, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import Layout from '~/components/layout/layout';
 import { z } from 'zod';
-import Link from 'next/link';
 
 const schema = z.object({
   email: z.string().min(1, { message: 'Email should have at least 1 letters' }),
