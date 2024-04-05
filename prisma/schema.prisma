@@ -1,5 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider     = "postgresql"
@@ -7,44 +8,40 @@ datasource db {
   relationMode = "prisma"
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Meeting {
-  id            Int         @id @default(autoincrement())
-  created_at    DateTime    @default(now())
-  date          DateTime
-  title         String
-  author        String
-  cover         String?      // Assuming the `cover` field is a string representing the image URL or file path, made it optional with `?`
-  chosenById    Int?
-  chosenBy      Member?   @relation("MeetingChosenBy", fields: [chosenById], references: [id])
-  participants  MeetingParticipants[]
-  isComplete    Boolean
+  id           Int                   @id(map: "idx_28700_PRIMARY") @default(autoincrement())
+  created_at   DateTime              @default(now()) @db.Timestamptz(6)
+  date         DateTime              @db.Timestamptz(6)
+  title        String                @db.VarChar(191)
+  author       String                @db.VarChar(191)
+  cover        String?               @db.VarChar(191)
+  chosenById   Int?
+  isComplete   Boolean
+  chosenBy     Member?               @relation("MeetingChosenBy", fields: [chosenById], references: [id])
+  participants MeetingParticipants[]
 }
 
 model Member {
-  id          Int         @id @default(autoincrement())
-  created_at  DateTime    @default(now())
-  firstName   String
-  lastName    String
-  joinDate    DateTime
-  exitDate    DateTime?
-  meetings    MeetingParticipants[]
-  chosenMeetings Meeting[]  @relation("MeetingChosenBy")
-	@@map("Member")
+  id             Int                   @id(map: "idx_28711_PRIMARY") @default(autoincrement())
+  created_at     DateTime              @default(now()) @db.Timestamptz(6)
+  firstName      String                @db.VarChar(191)
+  lastName       String                @db.VarChar(191)
+  joinDate       DateTime              @db.Timestamptz(6)
+  exitDate       DateTime?             @db.Timestamptz(6)
+  meetings       MeetingParticipants[]
+  chosenMeetings Meeting[]             @relation("MeetingChosenBy")
+
+  @@map("Member")
 }
 
 model MeetingParticipants {
-  meeting     Meeting     @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  participant Member @relation(fields: [participantId], references: [id], onDelete: Cascade)
-
-  meetingId   Int
+  meetingId     Int
   participantId Int
-  rating Int ?
-  isVisited Boolean
+  rating        Int?
+  isVisited     Boolean
+  meeting       Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  participant   Member  @relation(fields: [participantId], references: [id], onDelete: Cascade)
 
-  @@id([meetingId, participantId])
-	@@map("MeetingParticipants")
+  @@id([meetingId, participantId], map: "idx_28707_PRIMARY")
+  @@map("MeetingParticipants")
 }
