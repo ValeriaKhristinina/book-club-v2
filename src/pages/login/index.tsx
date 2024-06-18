@@ -1,4 +1,4 @@
-import { Button, Card, Group, InputBase, Text } from '@mantine/core';
+import { Button, Card, Group, InputBase } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import Layout from '~/components/layout/layout';
 import { z } from 'zod';

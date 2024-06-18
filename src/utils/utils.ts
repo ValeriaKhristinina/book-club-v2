@@ -62,13 +62,21 @@ export const checkVisitingParticipants = (meetings: Meeting[]): VisitingStructur
 }
 
 export const createQueue = (members: Member[], lastChoosedMember: Member, visitingParticipants: VisitingStructure) => {
-  let newQueque: Member[] = []
+  let newQueue: Member[] = []
   const lastChoosedMemberIndex = members.findIndex(member => member.id === lastChoosedMember?.id)
-    const firstCutArray = members ?  members.slice(lastChoosedMemberIndex + 1) : []
+
+  if (lastChoosedMemberIndex !== -1) {
+    const firstCutArray = members.slice(lastChoosedMemberIndex + 1)
     const secondCutArray = members.slice(0, lastChoosedMemberIndex + 1)
     const newArr = firstCutArray.concat(secondCutArray)
-    
-    newQueque = newArr.filter((participant) => visitingParticipants[participant.id] >= 2)
-    return newQueque
+
+    newQueue = newArr.filter((participant) => {
+      const visits = visitingParticipants[participant.id]
+      return visits !== undefined && visits >= 2
+    })
+  }
+  
+  return newQueue
 }
+
 

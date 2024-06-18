@@ -15,20 +15,19 @@ import {
 import Link from 'next/link';
 import { type Member } from '~/types/member';
 import { type Meeting } from '~/types/meeting';
+import { type NextMeeting } from '~/types/meeting';
 import Layout from '~/components/layout/layout';
 import BookCard from '../components/book-card/book-card';
-import { BOOK_CLUB_BIRTHDAY } from '~/const';
+import { BOOK_CLUB_BIRTHDAY, EMPTY_MEMBER } from '~/const';
 import { checkVisitingParticipants, createQueue } from '~/utils/utils';
 
 
 const Home: NextPage = () => {
   const [members, setMembers] = useState<Member[]>([]);
-  const [nextMeeting, setNextMeeting] = useState<Meeting>();
+  const [nextMeeting, setNextMeeting] = useState<NextMeeting>();
   const [closedMeetings, setClosedMeetings] = useState<Meeting[]>();
   const now = new Date();
   now.setHours(0, 0, 0, 0);
-
-  console.log(nextMeeting)
 
   const { data: actualMembers } = api.members.getActiveMembersByDate.useQuery({
     date: now
@@ -67,7 +66,7 @@ const Home: NextPage = () => {
   )?.chosenBy;
 
   const visitingStructure = checkVisitingParticipants(lastFourMeetings);
-  const newQueue = createQueue(members, lastChoosedMember, visitingStructure);
+  const newQueue = createQueue(members, lastChoosedMember as Member, visitingStructure);
 
   return (
       <Container className= {styles.appContainer}>

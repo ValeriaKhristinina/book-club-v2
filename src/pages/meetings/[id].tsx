@@ -16,8 +16,13 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { api, type RouterInputs } from '~/utils/api';
+import { EMPTY_MEETING } from '~/const';
 
-const EditMeeting = ({ meeting }: { meeting: Meeting }) => {
+interface EditMeetingProps {
+  meeting: Meeting
+}
+
+const EditMeeting = ({ meeting }: EditMeetingProps) => {
   const schema = z.object({
     title: z
       .string()
@@ -70,7 +75,6 @@ const EditMeeting = ({ meeting }: { meeting: Meeting }) => {
   const utils = api.useContext();
   const updateMeetingMutation = api.meetings.update.useMutation({
     onSuccess: () => {
-
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
        utils.meetings.getById.invalidate();
     }
@@ -198,7 +202,7 @@ const EditMeetingPage: NextPage = () => {
       <>
         <h1>Hello! {meeting?.id}</h1>
 
-        {isFetched && <EditMeeting meeting={meeting} />}
+        {isFetched && <EditMeeting meeting={meeting? meeting : EMPTY_MEETING} />}
       </>
     </Layout>
   );

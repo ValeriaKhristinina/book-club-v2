@@ -38,7 +38,12 @@ export const meetingsRouter = createTRPCRouter({
           id: input.id
         },
         include: {
-          participants: true
+          participants: {
+            include: {
+              participant: true
+            }
+          },
+          chosenBy: true
         }
       });
     }),
