@@ -1,13 +1,12 @@
-import styles from './members-table.module.css';
-import { Avatar, Table, Group, Text, ScrollArea, Badge } from '@mantine/core';
-import { type Member } from '../../types/member';
-import { type Meeting } from '../../types/meeting';
-import Link from 'next/link';
-import { ActionIcon } from '@mantine/core';
-import { Pencil } from 'tabler-icons-react';
-import { useState } from 'react';
-import { api } from '../../utils/api';
-import { EMPTY_MEMBER } from '~/const';
+import styles from "./members-table.module.css";
+import { Avatar, Group, Text, Badge, ScrollArea, Table } from "@mantine/core";
+import { type Member } from "../../types/member";
+import { type Meeting } from "../../types/meeting";
+import Link from "next/link";
+import { ActionIcon } from "@mantine/core";
+import { Pencil } from "tabler-icons-react";
+import { useState } from "react";
+import { api } from "../../utils/api";
 
 interface MembersTableProps {
   members: Member[] | undefined;
@@ -19,9 +18,7 @@ export function MembersTable({ members }: MembersTableProps) {
   const { data: meetings } = api.meetings.getAll.useQuery();
 
   if (!members) {
-    return (
-      <h1>no member</h1>
-    );
+    return <h1>no member</h1>;
   }
 
   const checkedLastVisitedMeeting = (member: Member, meetings: Meeting[]) => {
@@ -31,8 +28,7 @@ export function MembersTable({ members }: MembersTableProps) {
       : 0;
 
     const lastMeeting = meetings?.find((meeting) => meeting.id === meetingId);
-    return lastMeeting
-
+    return lastMeeting;
   };
 
   const rows = members.map((item) => (
@@ -56,7 +52,9 @@ export function MembersTable({ members }: MembersTableProps) {
       <td>
         <Text>{item.joinDate.toDateString()}</Text>
       </td>
-      <td><Text>{checkedLastVisitedMeeting(item, meetings)} </Text></td>
+      <td>
+        <Text>{checkedLastVisitedMeeting(item, meetings || [])?.title} </Text>
+      </td>
       <td>here viseted last 4 meeting</td>
       <td>
         {!item.exitDate ? (
@@ -75,7 +73,7 @@ export function MembersTable({ members }: MembersTableProps) {
         </td>
       )}
     </tr>
-  ));
+  ))
 
   return (
     <ScrollArea>
