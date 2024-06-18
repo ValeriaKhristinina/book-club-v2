@@ -97,7 +97,7 @@ const MeetingsPage: NextPage = () => {
       <Switch
         mr="12px"
         label={`${
-          actualMembers?.find((person) => person.id === member.id)?.firstName
+          actualMembers?.find((person) => person.id === member.id)?.firstName as string
         }`}
         {...form.getInputProps(`participants.${index}.isVisited`, {
           type: 'checkbox'
