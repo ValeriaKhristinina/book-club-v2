@@ -62,5 +62,13 @@ export const EMPTY_MEETING: Meeting = {
               exitDate: null
           }
       }
-  ]
+  ],
+  chosenBy: {
+    id: 0,
+    created_at: new Date(),
+    firstName: "first_name",
+    lastName: "last_name",
+    joinDate: new Date(),
+    exitDate: null
+  }
 }

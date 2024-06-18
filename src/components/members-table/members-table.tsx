@@ -7,6 +7,7 @@ import { ActionIcon } from "@mantine/core";
 import { Pencil } from "tabler-icons-react";
 import { useState } from "react";
 import { api } from "../../utils/api";
+import { EMPTY_MEETING } from "~/const";
 
 interface MembersTableProps {
   members: Member[] | undefined;
@@ -53,7 +54,7 @@ export function MembersTable({ members }: MembersTableProps) {
         <Text>{item.joinDate.toDateString()}</Text>
       </td>
       <td>
-        <Text>{checkedLastVisitedMeeting(item, meetings || [])?.title} </Text>
+        <Text>{checkedLastVisitedMeeting(item, meetings || [EMPTY_MEETING])?.title} </Text>
       </td>
       <td>here viseted last 4 meeting</td>
       <td>
