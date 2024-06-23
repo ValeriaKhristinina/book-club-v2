@@ -16,3 +16,10 @@
 .changeMeeting:hover {
   opacity: 1;
 }
+
+.loader {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  transform: translateX(-50%);
+}
