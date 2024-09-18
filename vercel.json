@@ -1,8 +1,13 @@
 {
+  "functions": {
+    "api/hello.js": {
+      "runtime": "nodejs14.x"
+    }
+  },
   "crons": [
     {
-      "path": "/server/api/cron",
-      "schedule": "*/5 * * * *"
+      "path": "/api/hello",
+      "schedule": "* * * * *"
     }
   ]
 }
