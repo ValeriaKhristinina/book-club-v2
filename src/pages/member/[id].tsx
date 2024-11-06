@@ -44,12 +44,16 @@ const Member: NextPage = () => {
 
   const showMeeting = 5;
 
+  const joinDate = member?.joinDate;
+  console.log(joinDate);
+
   return (
     <Layout>
       <>
         <h1>
           {member?.firstName} {member?.lastName}
         </h1>
+        {/* <h3>Since {member?.firstName}</h3> */}
 
         <Flex direction="row" justify={"space-between"}>
           <Box w="50%" mr="24px">
@@ -85,7 +89,7 @@ const Member: NextPage = () => {
             </Button>
           </Box>
           <Box w="50%">
-            <h2>Choosen book</h2>
+            <h2>Chosen book</h2>
             <List>
               {member?.chosenMeetings.slice(0, showMeeting).map((book) => (
                 <List.Item key={book.id} icon={<BookIcon />}>
@@ -110,8 +114,8 @@ const Member: NextPage = () => {
               onClick={() => setIsShowAllChoosen(!isShowAllChoosen)}
             >
               {isShowAllVisited
-                ? "Hide choosen meeting"
-                : "Show all choosen meetings"}
+                ? "Hide chosen meeting"
+                : "Show all chosen meetings"}
             </Button>
           </Box>
         </Flex>
