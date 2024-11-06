@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const membersRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -18,7 +18,11 @@ export const membersRouter = createTRPCRouter({
           id: input.id
         },
         include: {
-          meetings: true,
+          meetings: {
+            include: {
+              meeting: true
+            }
+          },
           chosenMeetings: true
         }
       });
@@ -66,29 +70,29 @@ export const membersRouter = createTRPCRouter({
         }
       });
     }),
-    getActiveMembersByDate: publicProcedure
+  getActiveMembersByDate: publicProcedure
     .input(z.object({ date: z.date() }))
     .query(({ input, ctx }) => {
       return ctx.prisma.member.findMany({
         where: {
           OR: [
             {
-              exitDate: null,
+              exitDate: null
             },
             {
               exitDate: {
-                gte: input.date,
-              },
-            },
+                gte: input.date
+              }
+            }
           ],
           joinDate: {
-            lte: input.date,
-          },
+            lte: input.date
+          }
         },
         include: {
           meetings: true,
           chosenMeetings: true
         }
       });
-    }),
+    })
 });
