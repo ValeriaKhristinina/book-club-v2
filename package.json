@@ -8,7 +8,8 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "db-dev": "npx prisma studio"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
