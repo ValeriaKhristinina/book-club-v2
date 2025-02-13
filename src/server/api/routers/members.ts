@@ -4,6 +4,11 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 export const membersRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.member.findMany({
+      orderBy: [
+        {
+          id: "asc"
+        }
+      ],
       include: {
         meetings: true,
         chosenMeetings: true
