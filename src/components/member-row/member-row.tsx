@@ -9,7 +9,8 @@ import {
   ActionIcon,
   Modal,
   InputBase,
-  Checkbox
+  Checkbox,
+  Button
 } from "@mantine/core";
 import { type Member } from "../../types/member";
 import { Pencil } from "tabler-icons-react";
@@ -28,10 +29,13 @@ const schema = z.object({
   lastName: z
     .string()
     .min(1, { message: "Last name should have at least 1 letters" }),
-  exitDate: z.date({
-    required_error: "Please select a exit date",
-    invalid_type_error: "That's not a date!"
-  }),
+  exitDate: z
+    .date({
+      required_error: "Please select a exit date",
+      invalid_type_error: "That's not a date!"
+    })
+    .optional()
+    .nullable(),
   joinDate: z.date({
     required_error: "Please select a join date",
     invalid_type_error: "That's not a date!"
@@ -41,8 +45,15 @@ const schema = z.object({
 const MemberRow = ({ member }: { member: Member }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [closeMembership, setCloseMembership] = useState(false);
-
   const { data: meetings } = api.meetings.getAll.useQuery();
+  const utils = api.useContext();
+  const updateMember = api.members.update.useMutation({
+    onSuccess: () => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      utils.members.getAll.invalidate();
+      close();
+    }
+  });
   const isAuth = true;
 
   const form = useForm({
@@ -50,8 +61,8 @@ const MemberRow = ({ member }: { member: Member }) => {
     initialValues: {
       firstName: member.firstName,
       lastName: member.lastName,
-      exitDate: member.exitDate,
-      joinDate: member.joinDate
+      joinDate: member.joinDate,
+      exitDate: member.exitDate ?? null
     }
   });
 
@@ -65,10 +76,20 @@ const MemberRow = ({ member }: { member: Member }) => {
     return lastMeeting;
   };
 
+  const onSubmitHandler = (values: typeof form.values) => {
+    updateMember.mutate({
+      id: member.id,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      joinDate: values.joinDate,
+      exitDate: closeMembership ? values.exitDate ?? null : null
+    });
+  };
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Change member info">
-        <form action="submit">
+        <form action="submit" onSubmit={form.onSubmit(onSubmitHandler)}>
           <InputBase
             label="First name"
             placeholder="Name"
@@ -101,6 +122,7 @@ const MemberRow = ({ member }: { member: Member }) => {
               {...form.getInputProps("exitDate")}
             />
           )}
+          <Button type="submit">Submit</Button>
         </form>
       </Modal>
       <tr>

@@ -59,7 +59,7 @@ export const membersRouter = createTRPCRouter({
         firstName: z.string().optional(),
         lastName: z.string().optional(),
         joinDate: z.date().optional(),
-        exitDate: z.date().optional()
+        exitDate: z.date().nullable()
       })
     )
     .mutation(({ input, ctx }) => {
