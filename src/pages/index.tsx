@@ -21,7 +21,6 @@ import Layout from "~/components/layout/layout";
 import BookCard from "../components/book-card/book-card";
 import { BOOK_CLUB_BIRTHDAY, EMPTY_MEMBER } from "~/const";
 import { checkVisitingParticipants, createQueue } from "~/utils/utils";
-import { H1 } from "tabler-icons-react";
 
 const Home: NextPage = () => {
   const [members, setMembers] = useState<Member[]>([]);

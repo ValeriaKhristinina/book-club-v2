@@ -1,8 +1,8 @@
-import styles from './index.module.css';
-import { type NextPage } from 'next';
-import { api } from '../../utils/api';
-import { z } from 'zod';
-import { useForm, zodResolver } from '@mantine/form';
+import styles from "./index.module.css";
+import { type NextPage } from "next";
+import { api } from "../../utils/api";
+import { z } from "zod";
+import { useForm, zodResolver } from "@mantine/form";
 import {
   Button,
   Card,
@@ -10,27 +10,27 @@ import {
   Container,
   Group,
   InputBase,
-  Title,
-} from '@mantine/core';
-import { DateInput } from '@mantine/dates';
-import Layout from '~/components/layout/layout';
-import { useState } from 'react';
-import { MembersTable } from '~/components/members-table/members-table';
+  Title
+} from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import Layout from "~/components/layout/layout";
+import { useState } from "react";
+import { MembersTable } from "~/components/members-table/members-table";
 
 const schema = z.object({
   firstName: z
     .string()
-    .min(2, { message: 'Name should have at least 2 letters' }),
+    .min(2, { message: "Name should have at least 2 letters" }),
   lastName: z
     .string()
-    .min(2, { message: 'Name should have at least 2 letters' }),
+    .min(2, { message: "Name should have at least 2 letters" }),
   joinDate: z.date({
-    required_error: 'Please select a join date',
+    required_error: "Please select a join date",
     invalid_type_error: "That's not a date!"
   }),
   exitDate: z.union([
     z.date({
-      required_error: 'Please select a exit date',
+      required_error: "Please select a exit date",
       invalid_type_error: "That's not a date!"
     }),
     z.null()
@@ -57,8 +57,8 @@ const MembersPage: NextPage = () => {
   const form = useForm({
     validate: zodResolver(schema),
     initialValues: {
-      firstName: '',
-      lastName: '',
+      firstName: "",
+      lastName: "",
       joinDate: new Date(),
       exitDate: null
     }
@@ -79,18 +79,20 @@ const MembersPage: NextPage = () => {
                   createMemberMutation.mutate(values);
                 })}
               >
-                <Title order={3} mb="24px">Add new member</Title>
+                <Title order={3} mb="24px">
+                  Add new member
+                </Title>
                 <InputBase
                   label="First name"
                   placeholder="First name"
                   mb="24px"
-                  {...form.getInputProps('firstName')}
+                  {...form.getInputProps("firstName")}
                 />
                 <InputBase
                   label="Last name"
                   placeholder="Last name"
                   mb="24px"
-                  {...form.getInputProps('lastName')}
+                  {...form.getInputProps("lastName")}
                 />
 
                 <DateInput
@@ -98,7 +100,7 @@ const MembersPage: NextPage = () => {
                   label="Join date"
                   placeholder="Join date"
                   mb="24px"
-                  {...form.getInputProps('joinDate')}
+                  {...form.getInputProps("joinDate")}
                 />
                 <Chip
                   checked={exitCheked}
@@ -113,7 +115,7 @@ const MembersPage: NextPage = () => {
                     label="Exit date"
                     placeholder="Exit date"
                     mb="24px"
-                    {...form.getInputProps('exitDate')}
+                    {...form.getInputProps("exitDate")}
                   />
                 )}
                 <Group position="apart">
