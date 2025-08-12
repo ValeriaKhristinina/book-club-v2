@@ -19,3 +19,9 @@
   bottom: 0;
   height: 2.8rem;
 }
+
+.navLink {
+  font-size: 16px;
+  margin: 0;
+  cursor: pointer;
+}
