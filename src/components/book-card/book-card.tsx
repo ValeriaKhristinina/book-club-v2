@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./book-card.module.css";
 import dayjs from "dayjs";
 import { api } from "~/utils/api";
@@ -26,6 +26,7 @@ import {
   getVisitedParticipants,
   getVisitingProgress
 } from "~/utils/utils";
+import { UserAuth } from "~/context/auth-context";
 
 interface BookCardProps {
   meeting: Meeting;
@@ -39,6 +40,7 @@ function BookCard({ meeting }: BookCardProps) {
       </Card>
     );
   }
+  const { isAuth } = UserAuth();
   const actualMembersQuery = api.members.getActiveMembersByDate.useQuery({
     date: meeting.date
   });
@@ -62,7 +64,8 @@ function BookCard({ meeting }: BookCardProps) {
     isLoadingProgress = false;
   }
 
-   const progress = (meeting.isComplete && !isLoadingProgress) ? visitingProgress : 0;
+  const progress =
+    meeting.isComplete && !isLoadingProgress ? visitingProgress : 0;
 
   return (
     <Card w="220px" shadow="xl" padding="12px" className={styles.bookCard}>
@@ -70,13 +73,15 @@ function BookCard({ meeting }: BookCardProps) {
         <Group>
           <Rating fractions={16} defaultValue={averageRating} readOnly />
           <Text size="xs">({averageRating ? averageRating : 0})</Text>
-          <Group className={styles.changeMeeting}>
-            <Link href={`/meetings/${meeting.id}`}>
-              <ActionIcon>
-                <Pencil size="1.125rem" />
-              </ActionIcon>
-            </Link>
-          </Group>
+          {isAuth && (
+            <Group className={styles.changeMeeting}>
+              <Link href={`/meetings/${meeting.id}`}>
+                <ActionIcon>
+                  <Pencil size="1.125rem" />
+                </ActionIcon>
+              </Link>
+            </Group>
+          )}
         </Group>
         <Text size="xs">
           {ratedParticipants.length}/{actualMembers.length}

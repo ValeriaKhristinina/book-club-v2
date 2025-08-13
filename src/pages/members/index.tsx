@@ -16,6 +16,7 @@ import { DateInput } from "@mantine/dates";
 import Layout from "~/components/layout/layout";
 import { useState } from "react";
 import { MembersTable } from "~/components/members-table/members-table";
+import { UserAuth } from "~/context/auth-context";
 
 const schema = z.object({
   firstName: z
@@ -40,6 +41,7 @@ const schema = z.object({
 const MembersPage: NextPage = () => {
   const [exitCheked, setExitChecked] = useState(false);
   const [openForm, setOpenForm] = useState(false);
+  const { isAuth } = UserAuth();
 
   const utils = api.useContext();
 
@@ -67,73 +69,79 @@ const MembersPage: NextPage = () => {
   return (
     <Layout>
       <main className={styles.membersPage}>
-        <Group>
-          {!openForm ? (
-            <Button onClick={() => setOpenForm(true)} mb="32px">
-              Create new member
-            </Button>
-          ) : (
-            <Card w="500px" shadow="xl" padding="80px 60px" mb="60px">
-              <form
-                onSubmit={form.onSubmit((values) => {
-                  createMemberMutation.mutate(values);
-                })}
-              >
-                <Title order={3} mb="24px">
-                  Add new member
-                </Title>
-                <InputBase
-                  label="First name"
-                  placeholder="First name"
-                  mb="24px"
-                  {...form.getInputProps("firstName")}
-                />
-                <InputBase
-                  label="Last name"
-                  placeholder="Last name"
-                  mb="24px"
-                  {...form.getInputProps("lastName")}
-                />
-
-                <DateInput
-                  valueFormat="DD MMMM YYYY"
-                  label="Join date"
-                  placeholder="Join date"
-                  mb="24px"
-                  {...form.getInputProps("joinDate")}
-                />
-                <Chip
-                  checked={exitCheked}
-                  onChange={() => setExitChecked(!exitCheked)}
-                  mb="18px"
+        {isAuth && (
+          <Group>
+            {!openForm ? (
+              <Button onClick={() => setOpenForm(true)} mb="32px">
+                Create new member
+              </Button>
+            ) : (
+              <Card w="500px" shadow="xl" padding="80px 60px" mb="60px">
+                <form
+                  onSubmit={form.onSubmit((values) => {
+                    createMemberMutation.mutate(values);
+                  })}
                 >
-                  Close membership
-                </Chip>
-                {exitCheked && (
+                  <Title order={3} mb="24px">
+                    Add new member
+                  </Title>
+                  <InputBase
+                    label="First name"
+                    placeholder="First name"
+                    mb="24px"
+                    {...form.getInputProps("firstName")}
+                  />
+                  <InputBase
+                    label="Last name"
+                    placeholder="Last name"
+                    mb="24px"
+                    {...form.getInputProps("lastName")}
+                  />
+
                   <DateInput
                     valueFormat="DD MMMM YYYY"
-                    label="Exit date"
-                    placeholder="Exit date"
+                    label="Join date"
+                    placeholder="Join date"
                     mb="24px"
-                    {...form.getInputProps("exitDate")}
+                    {...form.getInputProps("joinDate")}
                   />
-                )}
-                <Group position="apart">
-                  <Button
-                    type="submit"
-                    disabled={createMemberMutation.isLoading}
-                    loading={createMemberMutation.isLoading}
+                  <Chip
+                    checked={exitCheked}
+                    onChange={() => setExitChecked(!exitCheked)}
+                    mb="18px"
                   >
-                    Save
-                  </Button>
-                  <Button variant="default" onClick={() => setOpenForm(false)}>
-                    Cancel
-                  </Button>
-                </Group>
-              </form>
-            </Card>
-          )}
-        </Group>
+                    Close membership
+                  </Chip>
+                  {exitCheked && (
+                    <DateInput
+                      valueFormat="DD MMMM YYYY"
+                      label="Exit date"
+                      placeholder="Exit date"
+                      mb="24px"
+                      {...form.getInputProps("exitDate")}
+                    />
+                  )}
+                  <Group position="apart">
+                    <Button
+                      type="submit"
+                      disabled={createMemberMutation.isLoading}
+                      loading={createMemberMutation.isLoading}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="default"
+                      onClick={() => setOpenForm(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </Group>
+                </form>
+              </Card>
+            )}
+          </Group>
+        )}
+
         <Container p="0">
           <MembersTable members={members} />
         </Container>

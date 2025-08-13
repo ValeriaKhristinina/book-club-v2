@@ -20,7 +20,7 @@ function LoginPage() {
     onSuccess: () => {
       console.log("Login successful");
       setIsAuth(true);
-      router.push("/");
+      router.back();
     },
     onError: (err) => {
       console.error(err.message);

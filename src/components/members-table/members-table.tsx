@@ -1,14 +1,13 @@
 import { ScrollArea, Table } from "@mantine/core";
 import { type Member } from "../../types/member";
-import { useState } from "react";
 import MemberRow from "../member-row/member-row";
+import { UserAuth } from "~/context/auth-context";
 interface MembersTableProps {
   members: Member[] | undefined;
 }
 
 export function MembersTable({ members }: MembersTableProps) {
-  const [editingMember, setEditingMember] = useState<Member | null>(null);
-  const isAuth = true;
+  const { isAuth } = UserAuth();
 
   if (!members) {
     return <h1>no member</h1>;

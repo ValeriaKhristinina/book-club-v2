@@ -21,6 +21,7 @@ import { EMPTY_MEETING } from "~/const";
 import Link from "next/link";
 import { useState } from "react";
 import { DateInput } from "@mantine/dates";
+import { UserAuth } from "~/context/auth-context";
 
 const schema = z.object({
   firstName: z
@@ -46,6 +47,7 @@ const MemberRow = ({ member }: { member: Member }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [closeMembership, setCloseMembership] = useState(false);
   const { data: meetings } = api.meetings.getAll.useQuery();
+  const { isAuth } = UserAuth();
   const utils = api.useContext();
   const updateMember = api.members.update.useMutation({
     onSuccess: () => {
@@ -54,7 +56,6 @@ const MemberRow = ({ member }: { member: Member }) => {
       close();
     }
   });
-  const isAuth = true;
 
   const form = useForm({
     validate: zodResolver(schema),

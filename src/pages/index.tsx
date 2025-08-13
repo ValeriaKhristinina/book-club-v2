@@ -40,8 +40,6 @@ const Home: NextPage = () => {
     ? closedMeetings?.slice(-3).reverse()
     : [];
 
-  console.log(actualMembersFetched, closedMeetingsFetched);
-
   useEffect(() => {
     if (actualMembers) {
       setMembers(actualMembers);
