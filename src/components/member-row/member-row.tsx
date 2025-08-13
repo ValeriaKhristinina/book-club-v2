@@ -47,6 +47,10 @@ const MemberRow = ({ member }: { member: Member }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [closeMembership, setCloseMembership] = useState(false);
   const { data: meetings } = api.meetings.getAll.useQuery();
+  const { data: countLastFourVisiting } =
+    api.members.getLastFourMonthVisiting.useQuery({
+      memberId: member.id
+    });
   const { isAuth } = UserAuth();
   const utils = api.useContext();
   const updateMember = api.members.update.useMutation({
@@ -67,15 +71,19 @@ const MemberRow = ({ member }: { member: Member }) => {
     }
   });
 
-  const checkedLastVisitedMeeting = (member: Member, meetings: Meeting[]) => {
-    const reversedMemberMeeting = [...member.meetings].reverse();
-    const meetingId = reversedMemberMeeting
-      ? reversedMemberMeeting.find((meeting) => meeting.isVisited === true)
-      : 0;
+  const checkedLastVisitedMeeting = (member: Member) => {
+    const memberMeetings = member.meetings.filter(
+      (meeting) => meeting.isVisited
+    );
+    const reversed = memberMeetings.reverse();
+    const lastVisitedMeeting = meetings?.find(
+      (meeting) => meeting.id === reversed[0]?.meetingId
+    );
 
-    const lastMeeting = meetings?.find((meeting) => meeting.id === meetingId);
-    return lastMeeting;
+    return lastVisitedMeeting;
   };
+
+  const lastVisitedMeeting = checkedLastVisitedMeeting(member);
 
   const onSubmitHandler = (values: typeof form.values) => {
     updateMember.mutate({
@@ -147,14 +155,9 @@ const MemberRow = ({ member }: { member: Member }) => {
           <Text>{member.joinDate.toDateString()}</Text>
         </td>
         <td>
-          <Text>
-            {
-              checkedLastVisitedMeeting(member, meetings || [EMPTY_MEETING])
-                ?.title
-            }{" "}
-          </Text>
+          <Text>{lastVisitedMeeting?.title} </Text>
         </td>
-        <td>here viseted last 4 meeting</td>
+        <td>{countLastFourVisiting ? countLastFourVisiting : ""}</td>
         <td>
           {!member.exitDate ? (
             <Badge fullWidth>Active</Badge>

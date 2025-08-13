@@ -99,5 +99,27 @@ export const membersRouter = createTRPCRouter({
           chosenMeetings: true
         }
       });
+    }),
+  getLastFourMonthVisiting: publicProcedure
+    .input(z.object({ memberId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const now = new Date();
+      const fourMonthsAgo = new Date();
+      fourMonthsAgo.setMonth(now.getMonth() - 4);
+
+      const count = await ctx.prisma.meetingParticipants.count({
+        where: {
+          participantId: input.memberId,
+          isVisited: true,
+          meeting: {
+            date: {
+              gte: fourMonthsAgo,
+              lte: now
+            }
+          }
+        }
+      });
+
+      return count;
     })
 });
