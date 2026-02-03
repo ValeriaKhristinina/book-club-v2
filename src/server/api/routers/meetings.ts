@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
-import dayjs from 'dayjs';
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import dayjs from "dayjs";
 
 export const meetingsRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -12,6 +12,9 @@ export const meetingsRouter = createTRPCRouter({
           }
         },
         chosenBy: true
+      },
+      orderBy: {
+        date: "asc" // earliest first
       }
     });
   }),
@@ -166,12 +169,12 @@ export const meetingsRouter = createTRPCRouter({
       where: {
         isComplete: false,
         date: {
-          gte: dayjs().startOf('day').toDate()
+          gte: dayjs().startOf("day").toDate()
         }
       },
       orderBy: [
         {
-          date: 'asc'
+          date: "asc"
         }
       ],
       include: {
