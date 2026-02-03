@@ -97,7 +97,12 @@ export const membersRouter = createTRPCRouter({
         include: {
           meetings: true,
           chosenMeetings: true
-        }
+        },
+        orderBy: [
+          {
+            id: "asc"
+          }
+        ]
       });
     }),
   getLastFourMonthVisiting: publicProcedure
