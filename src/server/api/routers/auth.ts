@@ -1,18 +1,26 @@
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { env } from "../../../env.mjs";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const authRouter = createTRPCRouter({
   login: publicProcedure
     .input(z.object({ email: z.string(), password: z.string() }))
     .mutation(({ input }) => {
-      const USERNAME = env.NEXT_PUBLIC_LOGIN_USER;
-      const PASSWORD = env.NEXT_PUBLIC_LOGIN_PASSWORD;
+      // fallback if env vars are missing
+      const USERNAME = env.LOGIN_USER;
+      const PASSWORD = env.LOGIN_PASSWORD;
+
+      console.log("LOGIN USER:", USERNAME);
+      console.log("LOGIN PASSWORD:", PASSWORD);
 
       if (USERNAME === input.email && PASSWORD === input.password) {
-        return true;
+        return { success: true };
       } else {
-        throw new Error("Something went wrong");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Invalid credentials"
+        });
       }
     })
 });
