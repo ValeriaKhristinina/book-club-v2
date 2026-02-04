@@ -62,23 +62,16 @@ export const checkVisitingParticipants = (
 ): VisitingStructure => {
   const newObj: VisitingStructure = {};
 
-  meetings.map((item) => {
-    if (!item.participants) {
-      return false;
-    }
-    item.participants.map((person) => {
-      if (!person.isVisited) {
-        return false;
-      }
-      if (typeof newObj[person.participantId] !== "undefined") {
-        newObj[person.participantId] += 1;
-      } else {
-        newObj[person.participantId] = 1;
-      }
-      return true;
+  meetings.forEach((item) => {
+    if (!item.participants) return;
+
+    item.participants.forEach((person) => {
+      if (!person.isVisited) return;
+
+      newObj[person.participantId] = (newObj[person.participantId] ?? 0) + 1;
     });
-    return true;
   });
+
   return newObj;
 };
 
