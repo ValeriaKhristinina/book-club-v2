@@ -80,21 +80,26 @@ export const createQueue = (
   lastChoosedMember: Member,
   visitingParticipants: VisitingStructure
 ) => {
-  let newQueue: Member[] = [];
-  const lastChoosedMemberIndex = members.findIndex(
-    (member) => member.id === lastChoosedMember?.id
-  );
+  if (!lastChoosedMember) return [];
 
-  if (lastChoosedMemberIndex !== -1) {
-    const firstCutArray = members.slice(lastChoosedMemberIndex + 1);
-    const secondCutArray = members.slice(0, lastChoosedMemberIndex + 1);
-    const newArr = firstCutArray.concat(secondCutArray);
+  const pivotId = lastChoosedMember.id;
 
-    newQueue = newArr.filter((participant) => {
-      const visits = visitingParticipants[participant.id];
-      return visits !== undefined && visits >= 2;
-    });
-  }
+  // rotate queue so it starts AFTER the chosen id
+  const pivotIndex = members.findIndex((m) => m.id === pivotId);
+  if (pivotIndex === -1) return [];
 
-  return newQueue;
+  const rotated = [
+    ...members.slice(pivotIndex + 1),
+    ...members.slice(0, pivotIndex + 1)
+  ];
+
+  // filter by visiting rules
+  rotated.filter((member) => {
+    const visits = visitingParticipants[member.id];
+    return visits !== undefined && visits >= 2;
+  });
+
+  console.log(rotated);
+
+  return rotated;
 };

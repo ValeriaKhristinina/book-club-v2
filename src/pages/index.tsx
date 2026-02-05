@@ -60,13 +60,11 @@ const Home: NextPage = () => {
   const reversedClosedMeetings = closedMeetings
     ? [...closedMeetings].reverse()
     : [];
-  const lastFourMeetings = reversedClosedMeetings.slice(0, 4);
+  const lastFourClosedMeetings = reversedClosedMeetings.slice(0, 4);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const lastChoosedMember = reversedClosedMeetings.find(
-    (meeting) => meeting.chosenById != null
-  )?.chosenBy;
+  const lastChoosedMember = nextMeeting?.chosenBy;
 
-  const visitingStructure = checkVisitingParticipants(lastFourMeetings);
+  const visitingStructure = checkVisitingParticipants(lastFourClosedMeetings);
   const newQueue = createQueue(
     members,
     lastChoosedMember as Member,
@@ -111,11 +109,11 @@ const Home: NextPage = () => {
                   </Group>
 
                   <Group className={styles.nextMeetingInfo}>
-                    <Text mb="40px" size="sm">
+                    <Text mb="30px" size="sm">
                       {nextMeeting?.title}
                     </Text>
                     {nextMeeting?.chosenById !== null ? (
-                      <Text mb="40px" size="sm">
+                      <Text mb="30px" size="sm">
                         Choosen by:{" "}
                         <Link href={`/member/`}>
                           {nextMeeting?.chosenBy?.firstName}{" "}
@@ -138,7 +136,7 @@ const Home: NextPage = () => {
                 <Title className={styles.title}>Next Chosing Member:</Title>
                 <Card shadow="xl" className={styles.nextChoosed}>
                   <List className={styles.members}>
-                    {newQueue.slice(1, 6).map((member, index) => {
+                    {newQueue.slice(0, 5).map((member, index) => {
                       return (
                         <List.Item className={styles.firstMeber} key={index}>
                           <Link href={`/member/${member.id}`}>

@@ -91,7 +91,7 @@ const MemberRow = ({ member }: { member: Member }) => {
       firstName: values.firstName,
       lastName: values.lastName,
       joinDate: values.joinDate,
-      exitDate: closeMembership ? values.exitDate ?? null : null
+      exitDate: closeMembership ? (values.exitDate ?? null) : null
     });
   };
 
@@ -135,6 +135,7 @@ const MemberRow = ({ member }: { member: Member }) => {
         </form>
       </Modal>
       <tr>
+        <td>{member.id}</td>
         <td>
           <Group spacing="sm">
             <Avatar size={40} radius={40}>

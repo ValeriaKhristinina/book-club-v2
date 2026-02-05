@@ -20,6 +20,7 @@ export function MembersTable({ members }: MembersTableProps) {
       <Table miw={800} verticalSpacing="sm">
         <thead>
           <tr>
+            <th>id</th>
             <th>Member</th>
             <th>Join Date</th>
             <th>Last active</th>
